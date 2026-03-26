@@ -144,6 +144,19 @@ const I18N = {
     statsArticles: "articles",
     statsSources: "sources",
     statsRubriques: "rubriques",
+    patchSeason: "PATCH NOTES · SAISON 2025-2026",
+    patchTitle: "Règles officielles par catégorie d'âge",
+    patchSubtitle: "Données FFJudo / IJF — mises à jour saison 2025-2026",
+    patchEdit: "✎ Modifier",
+    patchSource: "Source : FFJudo / IJF · Règlement officiel saison 2025-2026 · Données pré-remplies par IA",
+    gradeSeason: "PASSAGE DE GRADE · SAISON 2025-2026",
+    gradeTitle: "Grades Dan — du 1er au 10e",
+    gradeSubtitle: "Conditions officielles FFJudo / IJF — mises à jour saison 2025-2026",
+    gradeSource: "Source : FFJudo / IJF · Conditions officielles saison 2025-2026 · Données vérifiées",
+    gradePrev: "← Grade précédent",
+    gradeNext: "Grade suivant →",
+    translatingContent: "Traduction du contenu…",
+    sidebarStats: "En chiffres",
     readMore: "Lire l'article original ↗",
     readFull: "Lire l'article complet ↗",
     close: "✕ Fermer",
@@ -167,6 +180,19 @@ const I18N = {
     statsArticles: "articles",
     statsSources: "sources",
     statsRubriques: "sections",
+    patchSeason: "PATCH NOTES · SEASON 2025-2026",
+    patchTitle: "Official Rules by Age Category",
+    patchSubtitle: "FFJudo / IJF data — updated for season 2025-2026",
+    patchEdit: "✎ Edit",
+    patchSource: "Source: FFJudo / IJF · Official rules season 2025-2026 · AI pre-filled data",
+    gradeSeason: "GRADE EXAMS · SEASON 2025-2026",
+    gradeTitle: "Dan Grades — 1st to 10th",
+    gradeSubtitle: "Official FFJudo / IJF requirements — updated for season 2025-2026",
+    gradeSource: "Source: FFJudo / IJF · Official requirements season 2025-2026 · Verified data",
+    gradePrev: "← Previous Grade",
+    gradeNext: "Next Grade →",
+    translatingContent: "Translating content…",
+    sidebarStats: "In numbers",
     readMore: "Read original article ↗",
     readFull: "Read full article ↗",
     close: "✕ Close",
@@ -190,6 +216,19 @@ const I18N = {
     statsArticles: "artículos",
     statsSources: "fuentes",
     statsRubriques: "secciones",
+    patchSeason: "PATCH NOTES · TEMPORADA 2025-2026",
+    patchTitle: "Reglas oficiales por categoría de edad",
+    patchSubtitle: "Datos FFJudo / IJF — actualizados para la temporada 2025-2026",
+    patchEdit: "✎ Editar",
+    patchSource: "Fuente: FFJudo / IJF · Reglamento oficial temporada 2025-2026 · Datos pre-rellenados por IA",
+    gradeSeason: "PASO DE GRADO · TEMPORADA 2025-2026",
+    gradeTitle: "Grados Dan — del 1º al 10º",
+    gradeSubtitle: "Condiciones oficiales FFJudo / IJF — actualizadas temporada 2025-2026",
+    gradeSource: "Fuente: FFJudo / IJF · Condiciones oficiales temporada 2025-2026 · Datos verificados",
+    gradePrev: "← Grado anterior",
+    gradeNext: "Grado siguiente →",
+    translatingContent: "Traduciendo contenido…",
+    sidebarStats: "En cifras",
     readMore: "Leer artículo original ↗",
     readFull: "Leer artículo completo ↗",
     close: "✕ Cerrar",
@@ -213,6 +252,19 @@ const I18N = {
     statsArticles: "Artikel",
     statsSources: "Quellen",
     statsRubriques: "Rubriken",
+    patchSeason: "PATCH NOTES · SAISON 2025-2026",
+    patchTitle: "Offizielle Regeln nach Alterskategorie",
+    patchSubtitle: "FFJudo / IJF-Daten — aktualisiert für Saison 2025-2026",
+    patchEdit: "✎ Bearbeiten",
+    patchSource: "Quelle: FFJudo / IJF · Offizielles Regelwerk Saison 2025-2026 · KI-vorbefüllte Daten",
+    gradeSeason: "GÜRTELPRÜFUNG · SAISON 2025-2026",
+    gradeTitle: "Dan-Grade — 1. bis 10.",
+    gradeSubtitle: "Offizielle FFJudo / IJF-Bedingungen — aktualisiert Saison 2025-2026",
+    gradeSource: "Quelle: FFJudo / IJF · Offizielle Bedingungen Saison 2025-2026 · Geprüfte Daten",
+    gradePrev: "← Vorheriger Grad",
+    gradeNext: "Nächster Grad →",
+    translatingContent: "Inhalt wird übersetzt…",
+    sidebarStats: "In Zahlen",
     readMore: "Originalartikel lesen ↗",
     readFull: "Vollständigen Artikel lesen ↗",
     close: "✕ Schließen",
@@ -702,6 +754,59 @@ ${JSON.stringify(batch)}`
   }
 }
 
+/* ══════════════════════════════════════════
+   TRADUCTION DU CONTENU STATIQUE (Patch Notes + Grades)
+   Cache en mémoire par langue pour éviter les re-appels
+══════════════════════════════════════════ */
+const _staticCache = {}; // { "en:patch": [...], "en:grade": [...] }
+
+async function translateStaticContent(data, targetLang, type) {
+  if (targetLang === "fr") return data; // déjà en FR
+  const cacheKey = `${targetLang}:${type}`;
+  if (_staticCache[cacheKey]) return _staticCache[cacheKey];
+
+  // Prépare batch : id + intro + sections[].title + sections[].text
+  const batch = data.map(item => ({
+    id: item.id,
+    intro: item.intro,
+    sections: item.sections.map(s => ({ title: s.title, text: s.text }))
+  }));
+
+  const langNames = { en:"English", es:"Spanish", de:"German" };
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 4000,
+        messages: [{
+          role: "user",
+          content: `You are a judo sports translator. Translate the following judo ${type} data to ${langNames[targetLang] || targetLang}. Keep technical judo terms (ippon, waza-ari, shido, etc.) in Japanese. Respond ONLY with valid JSON, no backticks or extra text, exactly this format:
+[{"id":"...","intro":"...","sections":[{"title":"...","text":"..."}]}]
+
+Data to translate:
+${JSON.stringify(batch)}`
+        }]
+      })
+    });
+    const json = await res.json();
+    const text = json.content?.map(b => b.text || "").join("") || "";
+    const translated = JSON.parse(text);
+    const map = {};
+    translated.forEach(item => { map[item.id] = item; });
+    const result = data.map(item => {
+      if (!map[item.id]) return item;
+      return { ...item, intro: map[item.id].intro, sections: map[item.id].sections };
+    });
+    _staticCache[cacheKey] = result;
+    return result;
+  } catch(err) {
+    console.warn("Traduction contenu statique échouée :", err.message);
+    return data;
+  }
+}
+
 /* ── Micro composants ── */
 function Badge({ sourceId, color, short }) {
   const c = color || "#888";
@@ -886,10 +991,27 @@ function AdminPNModal({ patchList, onSave, onClose }) {
   );
 }
 
-function PatchNotesPage({ patchList, onUpdate }) {
+function PatchNotesPage({ patchList, onUpdate, translatingStatic }) {
+  const { t } = React.useContext(LangContext);
   const [activeId, setActiveId]   = useState(patchList[0]?.id || null);
   const [showAdmin, setShowAdmin] = useState(false);
   const cat = patchList.find(p => p.id === activeId) || patchList[0];
+
+  // Reset activeId if patchList changes (ex: langue changée)
+  useEffect(() => {
+    if (!patchList.find(p => p.id === activeId)) {
+      setActiveId(patchList[0]?.id || null);
+    }
+  }, [patchList]);
+
+  if (translatingStatic) {
+    return (
+      <div style={{ textAlign:"center", padding:"5rem 0", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)" }}>
+        <div style={{ width:28, height:28, border:"2px solid var(--rule)", borderTopColor:"var(--accent)", borderRadius:"50%", animation:"spin 0.8s linear infinite", margin:"0 auto 16px" }} />
+        {t.translatingContent}
+      </div>
+    );
+  }
 
   return (
     <>
@@ -897,13 +1019,13 @@ function PatchNotesPage({ patchList, onUpdate }) {
         {/* Bandeau titre */}
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 0 10px", borderBottom:"3px solid var(--ink)", marginBottom:16 }}>
           <div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--accent)", marginBottom:3 }}>PATCH NOTES · SAISON 2025-2026</div>
-            <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:900, lineHeight:1.1 }}>Règles officielles par catégorie d'âge</h2>
-            <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.82rem", fontStyle:"italic", color:"var(--muted)", marginTop:4 }}>Données FFJudo / IJF — mises à jour saison 2025-2026</p>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--accent)", marginBottom:3 }}>{t.patchSeason}</div>
+            <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:900, lineHeight:1.1 }}>{t.patchTitle}</h2>
+            <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.82rem", fontStyle:"italic", color:"var(--muted)", marginTop:4 }}>{t.patchSubtitle}</p>
           </div>
           <button onClick={() => setShowAdmin(true)}
             style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.62rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--muted)", padding:"6px 12px", border:"1px solid var(--rule)", borderRadius:2, background:"none", cursor:"pointer", flexShrink:0 }}>
-            ✎ Modifier
+            {t.patchEdit}
           </button>
         </div>
 
@@ -954,7 +1076,7 @@ function PatchNotesPage({ patchList, onUpdate }) {
             {/* Footer */}
             <div style={{ padding:"8px 0", display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:4 }}>
               <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.55rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--rule)" }}>
-                Source : FFJudo / IJF · Règlement officiel saison 2025-2026 · Données pré-remplies par IA
+                {t.patchSource}
               </span>
               <a href="https://www.ffjudo.com" target="_blank" rel="noopener noreferrer"
                 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--accent)" }}>
@@ -977,18 +1099,35 @@ function PatchNotesPage({ patchList, onUpdate }) {
 }
 
 /* ══ PASSAGE DE GRADE PAGE ══ */
-function PassageGradePage() {
-  const [activeDan, setActiveDan] = useState(GRADES_DAN[0].id);
-  const grade = GRADES_DAN.find(g => g.id === activeDan) || GRADES_DAN[0];
+function PassageGradePage({ gradesList, translatingStatic }) {
+  const { t } = React.useContext(LangContext);
+  const [activeDan, setActiveDan] = useState(gradesList[0].id);
+  const grade = gradesList.find(g => g.id === activeDan) || gradesList[0];
+
+  // Reset si la liste change (changement de langue)
+  useEffect(() => {
+    if (!gradesList.find(g => g.id === activeDan)) {
+      setActiveDan(gradesList[0].id);
+    }
+  }, [gradesList]);
+
+  if (translatingStatic) {
+    return (
+      <div style={{ textAlign:"center", padding:"5rem 0", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)" }}>
+        <div style={{ width:28, height:28, border:"2px solid var(--rule)", borderTopColor:"var(--accent)", borderRadius:"50%", animation:"spin 0.8s linear infinite", margin:"0 auto 16px" }} />
+        {t.translatingContent}
+      </div>
+    );
+  }
 
   return (
     <>
       {/* Bandeau titre */}
       <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", padding:"14px 0 10px", borderBottom:"3px solid var(--ink)", marginBottom:16, flexWrap:"wrap", gap:8 }}>
         <div>
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--accent)", marginBottom:3 }}>PASSAGE DE GRADE · SAISON 2025-2026</div>
-          <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:900, lineHeight:1.1 }}>Grades Dan — du 1<sup>er</sup> au 10<sup>e</sup></h2>
-          <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.82rem", fontStyle:"italic", color:"var(--muted)", marginTop:4 }}>Conditions officielles FFJudo / IJF — mises à jour saison 2025-2026</p>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--accent)", marginBottom:3 }}>{t.gradeSeason}</div>
+          <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:900, lineHeight:1.1 }}>{t.gradeTitle}</h2>
+          <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.82rem", fontStyle:"italic", color:"var(--muted)", marginTop:4 }}>{t.gradeSubtitle}</p>
         </div>
         <a href="https://www.ffjudo.com" target="_blank" rel="noopener noreferrer"
           style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.62rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--accent)", padding:"6px 12px", border:"1px solid var(--accent)", borderRadius:2, textDecoration:"none", flexShrink:0, alignSelf:"flex-start" }}>
@@ -998,7 +1137,7 @@ function PassageGradePage() {
 
       {/* Pills de sélection */}
       <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:24 }}>
-        {GRADES_DAN.map(g => (
+        {gradesList.map(g => (
           <button key={g.id} onClick={() => setActiveDan(g.id)}
             style={{
               fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.08em",
@@ -1043,19 +1182,19 @@ function PassageGradePage() {
           {/* Footer fiche */}
           <div style={{ padding:"8px 0 4px", display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:4, flexWrap:"wrap", gap:8 }}>
             <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.55rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--rule)" }}>
-              Source : FFJudo / IJF · Conditions officielles saison 2025-2026 · Données vérifiées
+              {t.gradeSource}
             </span>
             <div style={{ display:"flex", gap:10 }}>
-              {grade.id !== GRADES_DAN[0].id && (
-                <button onClick={() => setActiveDan(GRADES_DAN[GRADES_DAN.findIndex(g=>g.id===grade.id)-1].id)}
+              {grade.id !== gradesList[0].id && (
+                <button onClick={() => setActiveDan(gradesList[gradesList.findIndex(g=>g.id===grade.id)-1].id)}
                   style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--muted)", padding:"5px 12px", border:"1px solid var(--rule)", borderRadius:2, background:"none", cursor:"pointer" }}>
-                  ← Grade précédent
+                  {t.gradePrev}
                 </button>
               )}
-              {grade.id !== GRADES_DAN[GRADES_DAN.length-1].id && (
-                <button onClick={() => setActiveDan(GRADES_DAN[GRADES_DAN.findIndex(g=>g.id===grade.id)+1].id)}
+              {grade.id !== gradesList[gradesList.length-1].id && (
+                <button onClick={() => setActiveDan(gradesList[gradesList.findIndex(g=>g.id===grade.id)+1].id)}
                   style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"#fff", background:"var(--accent)", padding:"5px 14px", border:"none", borderRadius:2, cursor:"pointer" }}>
-                  Grade suivant →
+                  {t.gradeNext}
                 </button>
               )}
             </div>
@@ -1147,7 +1286,7 @@ function Sidebar({ activeSource, setActiveSource, sourceList, count }) {
         </button>
       ))}
       <div style={{ marginTop:24, paddingTop:16, borderTop:"2px solid var(--ink)" }}>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)", marginBottom:12 }}>En chiffres</div>
+        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)", marginBottom:12 }}>{t.sidebarStats}</div>
         {[{n:count,label:t.statsArticles},{n:sourceList.length,label:t.statsSources},{n:5-1,label:t.statsRubriques}].map(({n,label})=>(
           <div key={label} style={{marginBottom:10}}>
             <div style={{fontFamily:"'Playfair Display',serif",fontSize:"1.5rem",fontWeight:900,color:"var(--accent)",lineHeight:1}}>{n}</div>
@@ -1176,6 +1315,9 @@ function App() {
   const [openArticle,    setOpenArticle]    = useState(null);
   const [patchList,      setPatchList]      = useState(() => loadPatchNotes());
   const [lang,           setLang]           = useState(() => localStorage.getItem("judoactu_lang") || "fr");
+  const [translatedPatch, setTranslatedPatch] = useState(null);
+  const [translatedGrades, setTranslatedGrades] = useState(null);
+  const [translatingStatic, setTranslatingStatic] = useState(false);
   const timerRef = useRef(null);
 
   const t = I18N[lang] || I18N.fr;
@@ -1184,6 +1326,29 @@ function App() {
     setLang(code);
     try { localStorage.setItem("judoactu_lang", code); } catch(e) {}
   };
+
+  /* Traduction du contenu statique quand la langue change */
+  useEffect(() => {
+    if (lang === "fr") {
+      setTranslatedPatch(null);
+      setTranslatedGrades(null);
+      return;
+    }
+    let cancelled = false;
+    setTranslatingStatic(true);
+    Promise.all([
+      translateStaticContent(patchList, lang, "patch-notes"),
+      translateStaticContent(GRADES_DAN, lang, "grades")
+    ]).then(([patch, grades]) => {
+      if (cancelled) return;
+      setTranslatedPatch(patch);
+      setTranslatedGrades(grades);
+      setTranslatingStatic(false);
+    }).catch(() => {
+      if (!cancelled) setTranslatingStatic(false);
+    });
+    return () => { cancelled = true; };
+  }, [lang]);
 
   const load = async (silent=false) => {
     if (!silent) setLoading(true);
@@ -1226,15 +1391,18 @@ function App() {
   const hero      = filtered.find(a=>a.featured==="TRUE"||a.featured===true) || filtered[0];
   const secondary = filtered.filter(a=>a!==hero);
 
+  const activePatchList   = (lang !== "fr" && translatedPatch)   ? translatedPatch   : patchList;
+  const activeGradesList  = (lang !== "fr" && translatedGrades)  ? translatedGrades  : GRADES_DAN;
+
   return (
     <LangContext.Provider value={{ lang, t }}>
       <Header activeCategory={activeCategory} setActiveCategory={setActiveCategory} searchQuery={searchQuery} setSearchQuery={setSearchQuery} sources={sourceNames} lang={lang} setLang={handleSetLang} />
 
       <div className="page-wrap">
         {activeCategory === "patch-notes" ? (
-          <PatchNotesPage patchList={patchList} onUpdate={data => { setPatchList(data); savePatchNotes(data); }} />
+          <PatchNotesPage patchList={activePatchList} onUpdate={data => { setPatchList(data); savePatchNotes(data); }} translatingStatic={translatingStatic} />
         ) : activeCategory === "passage-grade" ? (
-          <PassageGradePage />
+          <PassageGradePage gradesList={activeGradesList} translatingStatic={translatingStatic} />
         ) : (
           <>
             {AD}
