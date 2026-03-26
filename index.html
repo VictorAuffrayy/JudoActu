@@ -711,12 +711,15 @@ function needsTranslation(article) {
   return !FR_SOURCES.includes(article.source);
 }
 
-async function translateArticles(articles) {
+async function translateArticles(articles, targetLang = "fr") {
   const toTranslate = articles.filter(needsTranslation);
   if (toTranslate.length === 0) return articles;
 
   // Prépare le batch : id + title + body
   const batch = toTranslate.map(a => ({ id: a.id, title: a.title, body: a.body }));
+
+  const langNames = { fr: "French", en: "English", es: "Spanish", de: "German" };
+  const targetLangName = langNames[targetLang] || "French";
 
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -727,10 +730,10 @@ async function translateArticles(articles) {
         max_tokens: 1000,
         messages: [{
           role: "user",
-          content: `Tu es un traducteur spécialisé en sport de combat. Traduis en français naturel et fluide les titres et résumés suivants (judo). Réponds UNIQUEMENT en JSON valide, sans backticks ni texte autour, avec exactement ce format :
+          content: `You are a combat sports translator. Translate the following judo article titles and summaries into natural, fluent ${targetLangName}. Respond ONLY with valid JSON, no backticks or extra text, exactly this format:
 [{"id":"...","title":"...","body":"..."}]
 
-Articles à traduire :
+Articles to translate:
 ${JSON.stringify(batch)}`
         }]
       })
@@ -1350,18 +1353,35 @@ function App() {
     return () => { cancelled = true; };
   }, [lang]);
 
-  const load = async (silent=false) => {
+  // Cache des articles bruts (avant traduction) pour éviter de re-fetcher à chaque changement de langue
+  const rawArticlesRef = useRef(null);
+  // Cache des articles traduits par langue
+  const _articleCacheRef = useRef({});
+
+  const load = async (silent=false, targetLang=null) => {
+    const useLang = targetLang || lang;
     if (!silent) setLoading(true);
     else setRefreshing(true);
     try {
-      const raw  = await fetchFromGoogle();
-      setTranslating(true);
-      const data = await translateArticles(raw);
-      setTranslating(false);
-      setArticles(data);
+      // Re-fetch les articles bruts seulement si pas encore en cache
+      if (!rawArticlesRef.current) {
+        rawArticlesRef.current = await fetchFromGoogle();
+      }
+      const raw = rawArticlesRef.current;
+
+      // Vérifie le cache de traduction pour cette langue
+      if (_articleCacheRef.current[useLang]) {
+        setArticles(_articleCacheRef.current[useLang]);
+      } else {
+        setTranslating(true);
+        const data = await translateArticles(raw, useLang);
+        setTranslating(false);
+        _articleCacheRef.current[useLang] = data;
+        setArticles(data);
+      }
       setIsFallback(false);
       const localeMap = { fr:"fr-FR", en:"en-GB", es:"es-ES", de:"de-DE" };
-      setLastUpdated(new Date().toLocaleTimeString(localeMap[lang]||"fr-FR",{hour:"2-digit",minute:"2-digit"}));
+      setLastUpdated(new Date().toLocaleTimeString(localeMap[useLang]||"fr-FR",{hour:"2-digit",minute:"2-digit"}));
     } catch(e) {
       console.warn("API indisponible, fallback :", e.message);
       if (!silent) { setArticles(FALLBACK_ARTICLES); setIsFallback(true); }
@@ -1371,11 +1391,24 @@ function App() {
     }
   };
 
+  // Chargement initial
   useEffect(() => {
     load();
-    timerRef.current = setInterval(() => load(true), REFRESH_INTERVAL);
+    timerRef.current = setInterval(() => {
+      // Forcer re-fetch complet toutes les 30min
+      rawArticlesRef.current = null;
+      _articleCacheRef.current = {};
+      load(true);
+    }, REFRESH_INTERVAL);
     return () => clearInterval(timerRef.current);
   }, []);
+
+  // Re-traduit les articles quand la langue change (si articles déjà chargés)
+  useEffect(() => {
+    if (rawArticlesRef.current) {
+      load(false, lang);
+    }
+  }, [lang]);
 
   /* Sources uniques extraites des articles */
   const sourceList = [...new Map(articles.map(a=>[a.source,{id:a.source,name:a.sourceName||a.source,color:a.color}])).values()];
