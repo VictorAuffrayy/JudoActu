@@ -731,11 +731,8 @@ function FallbackBanner() {
 function RefreshBanner({ lastUpdated, onRefresh, refreshing }) {
   const { t } = React.useContext(LangContext);
   return (
-    <div style={{ background:"var(--cream)", border:"1px solid var(--rule)", borderRadius:3, padding:"8px 16px", marginBottom:20, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", letterSpacing:"0.08em", color:"var(--muted)", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+    <div style={{ background:"var(--cream)", border:"1px solid var(--rule)", borderRadius:3, padding:"8px 16px", marginBottom:20, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", letterSpacing:"0.08em", color:"var(--muted)" }}>
       <span>{t.refreshLabel(lastUpdated)}</span>
-      <button onClick={onRefresh} disabled={refreshing} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color: refreshing ? "var(--rule)" : "var(--accent)", cursor: refreshing ? "default" : "pointer", padding:"4px 10px", border:"1px solid currentColor", borderRadius:2, background:"none" }}>
-        {refreshing ? t.refreshing : t.refreshBtn}
-      </button>
     </div>
   );
 }
@@ -891,10 +888,7 @@ function PatchNotesPage({ patchList, onUpdate }) {
             <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:900, lineHeight:1.1 }}>{t.patchTitle}</h2>
             <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.82rem", fontStyle:"italic", color:"var(--muted)", marginTop:4 }}>{t.patchSubtitle}</p>
           </div>
-          <button onClick={() => setShowAdmin(true)}
-            style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.62rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--muted)", padding:"6px 12px", border:"1px solid var(--rule)", borderRadius:2, background:"none", cursor:"pointer", flexShrink:0 }}>
-            {t.patchEdit}
-          </button>
+
         </div>
 
         {/* Pills catégories */}
