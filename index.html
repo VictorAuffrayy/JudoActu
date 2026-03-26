@@ -1179,12 +1179,25 @@ function App() {
   const sourceList = [...new Map(articles.map(a=>[a.source,{id:a.source,name:a.sourceName||a.source,color:a.color}])).values()];
   const sourceNames = sourceList.map(s=>s.name);
 
-  const filtered = articles.filter(a => {
-    const matchCat = activeCategory==="all" || a.cat===activeCategory;
+  /* Détecte si un article concerne l'équipe de France */
+  function isEquipeFrance(a) {
+    const txt = ((a.title||"") + " " + (a.body||"") + " " + (a.sourceName||"")).toLowerCase();
+    return /\b(équipe de france|france judo|bleues?|riner|agbégnenou|clarisse|teddy|mkheidze|pinot|gneto|djalo|cysique|stanguennec|sélectionné|tricolore|ffjudo|ff judo)\b/.test(txt)
+      || a.source === "ffjudo";
+  }
+
+  /* Enrichit chaque article avec sa catégorie détectée */
+  const enriched = articles.map(a => ({
+    ...a,
+    _cat: isEquipeFrance(a) ? "equipe" : (a.cat || "compet"),
+  }));
+
+  const filtered = enriched.filter(a => {
+    const matchCat = activeCategory==="all" || a._cat===activeCategory;
     const matchSrc = activeSource==="all"   || a.source===activeSource;
     const q = searchQuery.toLowerCase();
     return matchCat && matchSrc && (!q || (a.title||"").toLowerCase().includes(q) || (a.body||"").toLowerCase().includes(q));
-  });
+  }).slice(0, 20); /* 20 articles max affichés */
 
   const hero      = filtered.find(a=>a.featured==="TRUE"||a.featured===true) || filtered[0];
   const secondary = filtered.filter(a=>a!==hero);
