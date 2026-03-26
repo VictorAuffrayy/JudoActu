@@ -122,11 +122,11 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwBD9BECKQOEq4N-VXER42A
 const REFRESH_INTERVAL = 30 * 60 * 1000;
 
 const CATEGORIES = [
-  { id:"all",         label:"Toutes"            },
-  { id:"compet",      label:"Compétitions"      },
-  { id:"equipe",      label:"Équipe de France"  },
-  { id:"portrait",    label:"Portraits"         },
-  { id:"patch-notes", label:"📋 Patch Notes"    },
+  { id:"all",            label:"Toutes"             },
+  { id:"compet",         label:"Compétitions"       },
+  { id:"equipe",         label:"Équipe de France"   },
+  { id:"passage-grade",  label:"🥋 Passage de grade" },
+  { id:"patch-notes",    label:"📋 Patch Notes"      },
 ];
 
 /* ══════════════════════════════════════════
@@ -315,6 +315,165 @@ const PATCH_NOTES_DEFAULT = [
   },
 ];
 
+/* ══════════════════════════════════════════
+   PASSAGE DE GRADE — 1er au 10e Dan
+   Source : FFJudo / IJF — Mis à jour saison 2025-2026
+══════════════════════════════════════════ */
+const GRADES_DAN = [
+  {
+    id: "shodan", dan: 1, label: "1er Dan", romaji: "Shodan", color: "#1a1a1a",
+    ceinture: "Noire", emoji: "🥋",
+    intro: "Premier niveau de ceinture noire. Il marque la fin du statut de débutant et le début d'un apprentissage profond du judo.",
+    sections: [
+      { title: "Âge minimum", text: "15 ans révolus au jour du passage." },
+      { title: "Grade requis", text: "Ceinture marron (1er kyu) en cours de validité." },
+      { title: "Ancienneté au grade", text: "Minimum 1 an en tant que 1er kyu." },
+      { title: "Licence FFJudo", text: "Licence compétiteur ou dirigeant valide pour la saison en cours." },
+      { title: "Conditions sportives", text: "Avoir participé à au moins 1 compétition officielle (club, départementale ou régionale) au cours des 2 dernières saisons." },
+      { title: "Examen technique", text: "Présentation de Nage-no-kata OU Katame-no-kata en intégralité devant un jury FFJudo habilité. Notation sur la forme, la précision et la compréhension des techniques." },
+      { title: "Randori / Combat", text: "Épreuve de randori (combats libres) devant le jury, démontrant la maîtrise technique et l'esprit du judo." },
+      { title: "Fiche de présentation", text: "Dossier de candidature signé par le président de club et l'enseignant responsable (BE JUDO ou DAN supérieur)." },
+      { title: "Coût indicatif", text: "Frais de passage variables selon le comité départemental/régional. Environ 40–80 €." },
+      { title: "Délivrance", text: "Le titre est délivré par la FFJudo après validation du jury régional. Passeport sportif mis à jour." },
+    ]
+  },
+  {
+    id: "nidan", dan: 2, label: "2e Dan", romaji: "Nidan", color: "#1a1a1a",
+    ceinture: "Noire", emoji: "🥋",
+    intro: "Confirmation de la maîtrise technique. Le judoka approfondit son judo personnel et commence à transmettre.",
+    sections: [
+      { title: "Âge minimum", text: "17 ans révolus." },
+      { title: "Grade requis", text: "1er Dan en cours de validité." },
+      { title: "Ancienneté au grade", text: "Minimum 2 ans en tant que 1er Dan." },
+      { title: "Licence FFJudo", text: "Licence valide pour la saison. Activité régulière en club requise." },
+      { title: "Conditions sportives", text: "Participation à des compétitions ou animations sportives. Implication dans la vie du club appréciée." },
+      { title: "Examen technique", text: "Présentation de Nage-no-kata ET Katame-no-kata. Un kata au choix peut être substitué selon le comité (ex : Kime-no-kata)." },
+      { title: "Randori / Combat", text: "Randori obligatoire devant jury. Démonstration d'une technique signature (tokui-waza) expliquée et mise en pratique." },
+      { title: "Travail pédagogique", text: "Présentation orale ou écrite d'un sujet lié au judo (histoire, technique, pédagogie) de 10 min max." },
+      { title: "Coût indicatif", text: "Environ 50–90 €." },
+      { title: "Délivrance", text: "Délivré par la FFJudo sur proposition du jury régional. Diplôme officiel + mise à jour du passeport sportif." },
+    ]
+  },
+  {
+    id: "sandan", dan: 3, label: "3e Dan", romaji: "Sandan", color: "#1a1a1a",
+    ceinture: "Noire", emoji: "🥋",
+    intro: "Le judoka est reconnu comme praticien accompli. Il a généralement un rôle actif dans son club (enseignant, encadrant).",
+    sections: [
+      { title: "Âge minimum", text: "20 ans révolus." },
+      { title: "Grade requis", text: "2e Dan en cours de validité." },
+      { title: "Ancienneté au grade", text: "Minimum 3 ans en tant que 2e Dan." },
+      { title: "Activité requise", text: "Pratique régulière attestée par le club. Encadrement ou enseignement apprécié (moniteur, animateur, BE JUDO)." },
+      { title: "Examen technique", text: "Présentation de 2 katas obligatoires dont Nage-no-kata. Le jury peut demander des explications pédagogiques sur les techniques." },
+      { title: "Randori", text: "Randori avec des partenaires de niveaux variés. Le jury évalue la qualité du judo, pas la victoire." },
+      { title: "Mémoire ou dossier", text: "Dossier technique sur un aspect du judo (kata, règlement, biomécanique, histoire) — environ 5–10 pages." },
+      { title: "Coût indicatif", text: "Environ 60–100 €." },
+      { title: "Délivrance", text: "FFJudo. Jury régional ou national selon les comités." },
+    ]
+  },
+  {
+    id: "yondan", dan: 4, label: "4e Dan", romaji: "Yondan", color: "#c8102e",
+    ceinture: "Noire / Rouge-Blanche (option)", emoji: "🔴",
+    intro: "Niveau expert. Le 4e Dan est souvent formateur diplômé d'État ou enseignant expérimenté. Reconnaissance nationale.",
+    sections: [
+      { title: "Âge minimum", text: "25 ans révolus." },
+      { title: "Grade requis", text: "3e Dan en cours de validité." },
+      { title: "Ancienneté au grade", text: "Minimum 4 ans en tant que 3e Dan." },
+      { title: "Activité & mérites", text: "Implication forte dans le judo : enseignement, arbitrage, formation, dirigeant de club, compétitions. Le dossier de mérites est essentiel." },
+      { title: "Dossier de mérites", text: "Document retraçant le parcours sportif, pédagogique et associatif du candidat. Attestations obligatoires (club, ligue, comité)." },
+      { title: "Examen technique", text: "Présentation de 3 katas dont obligatoirement Nage-no-kata et un kata au choix (Kime, Ju-no, Gonosen, Itsutsu, Koshiki). Maîtrise attendue et transmission pédagogique." },
+      { title: "Oral devant jury", text: "Entretien approfondi sur la pédagogie, l'histoire du judo, les règles, et la vision personnelle de la pratique." },
+      { title: "Coût indicatif", text: "Environ 80–150 €. Passage devant commission nationale possible." },
+      { title: "Délivrance", text: "FFJudo — Commission nationale des grades. Diplôme national officiel." },
+    ]
+  },
+  {
+    id: "godan", dan: 5, label: "5e Dan", romaji: "Godan", color: "#c8102e",
+    ceinture: "Rouge-Blanche", emoji: "🔴⚪",
+    intro: "Ceinture rouge et blanche. Haute distinction nationale. Le 5e Dan est un pilier de la communauté judo française.",
+    sections: [
+      { title: "Âge minimum", text: "30 ans révolus." },
+      { title: "Grade requis", text: "4e Dan en cours de validité." },
+      { title: "Ancienneté au grade", text: "Minimum 5 ans en tant que 4e Dan." },
+      { title: "Ceinture", text: "Rouge et blanche (ko-haku-obi). Port officiel reconnu par la FFJudo et l'IJF." },
+      { title: "Dossier de mérites complet", text: "Synthèse exhaustive de la carrière sportive (palmarès), enseignement (diplômes, postes), actions associatives (présidence, commissions, formations), rayonnement régional/national." },
+      { title: "Examen ou équivalence", text: "Selon le profil : présentation de katas devant jury national OU équivalence accordée sur dossier exceptionnel (champion national/international, formateur national reconnu)." },
+      { title: "Recommandations", text: "Lettres de recommandation de personnalités du judo français (4e ou 5e Dan minimum, dirigeants FFJudo)." },
+      { title: "Coût indicatif", text: "Environ 100–200 €. Commission nationale des grades (Paris)." },
+      { title: "Délivrance", text: "FFJudo — Commission nationale. Cérémonie de remise officielle organisée." },
+    ]
+  },
+  {
+    id: "rokudan", dan: 6, label: "6e Dan", romaji: "Rokudan", color: "#c8102e",
+    ceinture: "Rouge-Blanche", emoji: "🔴⚪",
+    intro: "Distinction exceptionnelle. Le 6e Dan récompense une vie entière au service du judo : sport, pédagogie, développement et rayonnement.",
+    sections: [
+      { title: "Âge minimum", text: "Généralement 40 ans. Pas de règle fixe — examiné au cas par cas." },
+      { title: "Grade requis", text: "5e Dan en cours de validité." },
+      { title: "Ancienneté au grade", text: "Minimum 6 ans en tant que 5e Dan (recommandation IJF)." },
+      { title: "Ceinture", text: "Rouge et blanche (ko-haku-obi) — identique au 5e Dan mais avec distinctions protocolaires supplémentaires." },
+      { title: "Critères principaux", text: "Contribution majeure au développement du judo à l'échelle nationale : formation de champions, création de clubs, développement territorial, œuvres pédagogiques publiées, rôle dans les instances FFJudo/EJU/IJF." },
+      { title: "Dossier exceptionnel", text: "Dossier complet avec toutes les attestations, palmarès, publications, reconnaissances officielles et lettres de soutien de la communauté judo nationale." },
+      { title: "Commission nationale", text: "Passage devant la commission nationale des grades élargie. Délibération collégiale." },
+      { title: "Homologation IJF", text: "Le grade est transmis à l'IJF pour homologation internationale. Inscription au registre mondial des dans." },
+      { title: "Délivrance", text: "FFJudo avec homologation IJF. Cérémonie officielle en présence du bureau fédéral." },
+    ]
+  },
+  {
+    id: "shichidan", dan: 7, label: "7e Dan", romaji: "Shichidan", color: "#c8102e",
+    ceinture: "Rouge-Blanche", emoji: "🔴⚪",
+    intro: "Réservé aux personnalités exceptionnelles du judo mondial. Le 7e Dan est une reconnaissance à vie pour une contribution hors norme.",
+    sections: [
+      { title: "Âge minimum", text: "Pas de limite fixe — ancienneté et mérites primordiaux. Généralement 50+ ans." },
+      { title: "Ancienneté au grade", text: "Minimum 7 ans en tant que 6e Dan." },
+      { title: "Ceinture", text: "Rouge et blanche — port cérémoniel lors des grandes occasions (championnats, cérémonies, démonstrations officielles)." },
+      { title: "Critères", text: "Contribution internationale reconnue, rôle dans les instances mondiales (EJU, IJF), œuvre pédagogique ou scientifique publiée, formation de judokas de haut niveau sur plusieurs générations." },
+      { title: "Nomination", text: "Nomination par la FFJudo sur proposition d'une commission spéciale. Pas d'examen formel — le dossier de vie fait foi." },
+      { title: "Homologation IJF", text: "Obligatoire. Inscription au registre mondial. Reconnaissance internationale." },
+      { title: "Délivrance", text: "FFJudo + IJF conjointement. Remise lors d'une cérémonie nationale ou internationale." },
+    ]
+  },
+  {
+    id: "hachidan", dan: 8, label: "8e Dan", romaji: "Hachidan", color: "#c8102e",
+    ceinture: "Rouge-Blanche", emoji: "🔴⚪",
+    intro: "Grade rarissime en France. Attribué à des légendes vivantes du judo ayant marqué plusieurs décennies de pratique mondiale.",
+    sections: [
+      { title: "Ancienneté au grade", text: "Minimum 8–10 ans en tant que 7e Dan." },
+      { title: "Critères absolus", text: "Rayonnement mondial du judo directement lié à la personne : auteur de méthodes pédagogiques de référence, contribution fondatrice à la diffusion internationale, ou carrière sportive et pédagogique de premier plan mondial." },
+      { title: "Nombre en France", text: "Moins de 10 porteurs du 8e Dan en France à ce jour." },
+      { title: "Ceinture", text: "Rouge-Blanche (ko-haku-obi). Certains hauts gradés de 8e Dan portent la ceinture rouge lors des cérémonies solennelles." },
+      { title: "Nomination", text: "Proposé par la commission nationale des grades, validé par le Comité Directeur FFJudo, homologué par l'IJF." },
+      { title: "Délivrance", text: "Cérémonie officielle de la FFJudo en présence du président fédéral. Homologation IJF obligatoire." },
+    ]
+  },
+  {
+    id: "kudan", dan: 9, label: "9e Dan", romaji: "Kudan", color: "#e63900",
+    ceinture: "Rouge", emoji: "🔴",
+    intro: "Grade légendaire. La ceinture rouge (aka-obi) est accordée à des figures historiques du judo mondial. Extrêmement rare.",
+    sections: [
+      { title: "Ceinture", text: "Rouge (aka-obi) — symbole suprême de maîtrise et de contribution au judo mondial." },
+      { title: "Critères", text: "Grade honorifique attribué par l'IJF et les fédérations nationales à des personnalités ayant consacré leur vie entière au développement mondial du judo. Mérites exceptionnels, reconnus universellement." },
+      { title: "Nombre mondial", text: "Moins de 30 porteurs vivants dans le monde. Quelques rares personnalités françaises ont reçu ce grade à titre posthume ou honorifique." },
+      { title: "Processus", text: "Proposé par la commission suprême des grades de l'IJF. Délibération mondiale. Aucun examen pratique — la vie entière est l'examen." },
+      { title: "Ancienneté", text: "Minimum 8–10 ans en tant que 8e Dan. Pratique continue jusqu'à un âge avancé." },
+      { title: "Délivrance", text: "IJF avec cosignature des fédérations nationales concernées. Remise lors du Congrès IJF ou des Jeux Olympiques." },
+    ]
+  },
+  {
+    id: "judan", dan: 10, label: "10e Dan", romaji: "Judan", color: "#e63900",
+    ceinture: "Rouge", emoji: "🔴",
+    intro: "Le grade ultime du judo mondial. Attribué à titre exceptionnel ou posthume à des figures fondatrices. Moins de 20 personnes l'ont reçu dans toute l'histoire du judo.",
+    sections: [
+      { title: "Ceinture", text: "Rouge (aka-obi). Grade le plus élevé reconnu par l'IJF." },
+      { title: "Histoire", text: "Jigoro Kano, fondateur du judo, n'a jamais officiellement décerné le 10e Dan. Il a été attribué à titre posthume à quelques figures fondatrices (Yoshiaki Yamashita, Hikoichi Aida, Kyuzo Mifune…)." },
+      { title: "En France", text: "Aucun 10e Dan vivant en France à ce jour. Grade théorique pour les fédérations françaises." },
+      { title: "Critères", text: "Contribution fondatrice et universellement reconnue à la création, la diffusion et la philosophie du judo mondial. Généralement attribué à titre posthume ou à des nonagenaires ayant consacré 70+ ans au judo." },
+      { title: "Processus IJF", text: "Délibération du Conseil IJF en session plénière. Vote à la majorité qualifiée. Homologation définitive et irrévocable." },
+      { title: "Porteurs vivants", text: "À ce jour, les derniers 10e Dans vivants recensés par l'IJF sont Yasuhiro Yamashita (Japon, JO 1984) et quelques maîtres japonais nonagenaires. La liste est confidentielle et tenue par l'IJF." },
+      { title: "Délivrance", text: "IJF uniquement. Cérémonie mondiale unique. Document signé par le président de l'IJF." },
+    ]
+  },
+];
+
 const PN_STORAGE_KEY = "judoactu_patchnotes_v2";
 
 function loadPatchNotes() {
@@ -364,7 +523,7 @@ const FALLBACK_ARTICLES = [
   { id:"f3", featured:"FALSE", source:"ffjudo",     sourceName:"FF Judo",    color:"#003189", short:"FFJ", cat:"equipe", kicker:"France Judo",   date:"24 janv. 2025", title:"Agbégnénou de retour : «Je veux prouver que je suis encore là»",          img:"https://images.unsplash.com/photo-1540479859555-17af45c78602?w=900&q=80",  link:"https://www.ffjudo.com", body:"Clarisse Agbégnénou a confirmé sa participation au Grand Prix de Paris prévu en février." },
   { id:"f4", featured:"FALSE", source:"judoinside", sourceName:"JudoInside", color:"#e63946", short:"JIN", cat:"compet", kicker:"JudoInside",    date:"23 janv. 2025", title:"Tokyo Grand Slam : programme et têtes de série à surveiller",             img:"https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=900&q=80",  link:"https://judoinside.com", body:"Le Grand Slam de Tokyo ouvre ses portes. Seize catégories, quatre-vingt nations représentées." },
   { id:"f5", featured:"FALSE", source:"eju",        sourceName:"EJU",        color:"#2d6a4f", short:"EJU", cat:"resultat",kicker:"EJU",          date:"22 janv. 2025", title:"Mondiaux juniors : la France repart avec trois médailles",                 img:"https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=80",  link:"https://www.eju.net",    body:"Un or, un argent, un bronze. Le bilan est flatteur pour la délégation française." },
-  { id:"f6", featured:"FALSE", source:"ffjudo",     sourceName:"FF Judo",    color:"#003189", short:"FFJ", cat:"portrait",kicker:"France Judo",  date:"21 janv. 2025", title:"Luka Mkheidze : «Chaque Grand Slam, je joue ma carrière»",               img:"https://images.unsplash.com/photo-1564415315949-7be64a2a08fb?w=900&q=80",  link:"https://www.ffjudo.com", body:"Naturalisé français en 2019, champion olympique à Tokyo, Luka Mkheidze vit le judo avec une intensité rare." },
+  { id:"f6", featured:"FALSE", source:"ffjudo",     sourceName:"FF Judo",    color:"#003189", short:"FFJ", cat:"equipe", kicker:"France Judo",  date:"21 janv. 2025", title:"Luka Mkheidze : «Chaque Grand Slam, je joue ma carrière»",               img:"https://images.unsplash.com/photo-1564415315949-7be64a2a08fb?w=900&q=80",  link:"https://www.ffjudo.com", body:"Naturalisé français en 2019, champion olympique à Tokyo, Luka Mkheidze vit le judo avec une intensité rare." },
 ];
 
 /* ══════════════════════════════════════════
@@ -705,6 +864,96 @@ function PatchNotesPage({ patchList, onUpdate }) {
   );
 }
 
+/* ══ PASSAGE DE GRADE PAGE ══ */
+function PassageGradePage() {
+  const [activeDan, setActiveDan] = useState(GRADES_DAN[0].id);
+  const grade = GRADES_DAN.find(g => g.id === activeDan) || GRADES_DAN[0];
+
+  return (
+    <>
+      {/* Bandeau titre */}
+      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", padding:"14px 0 10px", borderBottom:"3px solid var(--ink)", marginBottom:16, flexWrap:"wrap", gap:8 }}>
+        <div>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--accent)", marginBottom:3 }}>PASSAGE DE GRADE · SAISON 2025-2026</div>
+          <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:900, lineHeight:1.1 }}>Grades Dan — du 1<sup>er</sup> au 10<sup>e</sup></h2>
+          <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.82rem", fontStyle:"italic", color:"var(--muted)", marginTop:4 }}>Conditions officielles FFJudo / IJF — mises à jour saison 2025-2026</p>
+        </div>
+        <a href="https://www.ffjudo.com" target="_blank" rel="noopener noreferrer"
+          style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.62rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--accent)", padding:"6px 12px", border:"1px solid var(--accent)", borderRadius:2, textDecoration:"none", flexShrink:0, alignSelf:"flex-start" }}>
+          ffjudo.com ↗
+        </a>
+      </div>
+
+      {/* Pills de sélection */}
+      <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:24 }}>
+        {GRADES_DAN.map(g => (
+          <button key={g.id} onClick={() => setActiveDan(g.id)}
+            style={{
+              fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.08em",
+              padding:"7px 14px", borderRadius:20, cursor:"pointer", transition:"all 0.15s",
+              background: activeDan===g.id ? (g.dan >= 9 ? "#e63900" : g.dan >= 4 ? "#c8102e" : "#1a1a1a") : "transparent",
+              color: activeDan===g.id ? "#fff" : "var(--muted)",
+              border: activeDan===g.id ? `2px solid ${g.dan >= 9 ? "#e63900" : g.dan >= 4 ? "#c8102e" : "#1a1a1a"}` : "2px solid var(--rule)",
+            }}>
+            {g.emoji} {g.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Fiche du dan actif */}
+      {grade && (
+        <div key={grade.id} className="fade-up">
+          {/* En-tête */}
+          <div style={{ display:"flex", alignItems:"flex-start", gap:16, padding:"18px 20px", background:"var(--ink)", color:"var(--paper)", marginBottom:2 }}>
+            <div style={{ fontSize:"2.4rem", lineHeight:1 }}>{grade.emoji}</div>
+            <div style={{ flex:1 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:6 }}>
+                <span style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.5rem", fontWeight:900 }}>{grade.label}</span>
+                <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.12em", textTransform:"uppercase", fontStyle:"italic", color:"#aaa" }}>{grade.romaji}</span>
+                <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.1em", padding:"3px 10px", borderRadius:2, background: grade.dan >= 9 ? "#e63900" : grade.dan >= 4 ? "#c8102e" : "#fff", color: grade.dan >= 4 ? "#fff" : "#111" }}>{grade.ceinture}</span>
+              </div>
+              <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.85rem", fontStyle:"italic", color:"#ccc", lineHeight:1.55 }}>{grade.intro}</p>
+            </div>
+          </div>
+
+          {/* Grille des conditions */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(280px, 1fr))", gap:1, background:"var(--rule)" }}>
+            {grade.sections.map((sec, i) => (
+              <div key={i} style={{ background:"var(--paper)", padding:"14px 18px" }}>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.18em", textTransform:"uppercase", color: grade.dan >= 9 ? "#e63900" : grade.dan >= 4 ? "#c8102e" : "#1a1a1a", marginBottom:5, borderBottom:`1px solid ${grade.dan >= 9 ? "#e6390030" : grade.dan >= 4 ? "#c8102e30" : "#1a1a1a30"}`, paddingBottom:4 }}>
+                  {sec.title}
+                </div>
+                <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.84rem", lineHeight:1.6, color:"#2a2828" }}>{sec.text}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer fiche */}
+          <div style={{ padding:"8px 0 4px", display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:4, flexWrap:"wrap", gap:8 }}>
+            <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.55rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--rule)" }}>
+              Source : FFJudo / IJF · Conditions officielles saison 2025-2026 · Données vérifiées
+            </span>
+            <div style={{ display:"flex", gap:10 }}>
+              {grade.id !== GRADES_DAN[0].id && (
+                <button onClick={() => setActiveDan(GRADES_DAN[GRADES_DAN.findIndex(g=>g.id===grade.id)-1].id)}
+                  style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--muted)", padding:"5px 12px", border:"1px solid var(--rule)", borderRadius:2, background:"none", cursor:"pointer" }}>
+                  ← Grade précédent
+                </button>
+              )}
+              {grade.id !== GRADES_DAN[GRADES_DAN.length-1].id && (
+                <button onClick={() => setActiveDan(GRADES_DAN[GRADES_DAN.findIndex(g=>g.id===grade.id)+1].id)}
+                  style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"#fff", background:"var(--accent)", padding:"5px 14px", border:"none", borderRadius:2, cursor:"pointer" }}>
+                  Grade suivant →
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 /* ── Header ── */
 function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery, sources }) {
   const today = new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
@@ -829,6 +1078,8 @@ function App() {
       <div className="page-wrap">
         {activeCategory === "patch-notes" ? (
           <PatchNotesPage patchList={patchList} onUpdate={data => { setPatchList(data); savePatchNotes(data); }} />
+        ) : activeCategory === "passage-grade" ? (
+          <PassageGradePage />
         ) : (
           <>
             {AD}
