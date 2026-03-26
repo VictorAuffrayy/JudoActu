@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -124,162 +125,46 @@ const REFRESH_INTERVAL = 30 * 60 * 1000;
 /* ══════════════════════════════════════════
    LANGUES
 ══════════════════════════════════════════ */
-const LANGS = [
-  { code:"fr", label:"FR", flag:"🇫🇷", full:"Français" },
-  { code:"en", label:"EN", flag:"🇬🇧", full:"English" },
-  { code:"es", label:"ES", flag:"🇪🇸", full:"Español" },
-  { code:"de", label:"DE", flag:"🇩🇪", full:"Deutsch" },
-];
-
-const I18N = {
-  fr: {
-    tagline: "L'actualité du judo français et international",
-    searchPlaceholder: "Rechercher…",
-    catAll: "Toutes",
-    catCompet: "Compétitions",
-    catEquipe: "Équipe de France",
-    catGrade: "🥋 Passage de grade",
-    catPatch: "📋 Patch Notes",
-    sourcesTitle: "Sources",
-    statsArticles: "articles",
-    statsSources: "sources",
-    statsRubriques: "rubriques",
-    patchSeason: "PATCH NOTES · SAISON 2025-2026",
-    patchTitle: "Règles officielles par catégorie d'âge",
-    patchSubtitle: "Données FFJudo / IJF — mises à jour saison 2025-2026",
-    patchEdit: "✎ Modifier",
-    patchSource: "Source : FFJudo / IJF · Règlement officiel saison 2025-2026 · Données pré-remplies par IA",
-    gradeSeason: "PASSAGE DE GRADE · SAISON 2025-2026",
-    gradeTitle: "Grades Dan — du 1er au 10e",
-    gradeSubtitle: "Conditions officielles FFJudo / IJF — mises à jour saison 2025-2026",
-    gradeSource: "Source : FFJudo / IJF · Conditions officielles saison 2025-2026 · Données vérifiées",
-    gradePrev: "← Grade précédent",
-    gradeNext: "Grade suivant →",
-    translatingContent: "Traduction du contenu…",
-    sidebarStats: "En chiffres",
-    readMore: "Lire l'article original ↗",
-    readFull: "Lire l'article complet ↗",
-    close: "✕ Fermer",
-    noResult: "Aucun article ne correspond à votre sélection.",
-    fallback: "Connexion à l'API indisponible — affichage des derniers articles enregistrés.",
-    refreshLabel: (t) => `Mis à jour à ${t} · Actualisation automatique toutes les 30 min`,
-    refreshBtn: "↻ Actualiser",
-    refreshing: "↻ Actualisation…",
-    loading: "Chargement des articles…",
-    translating: "Traduction en cours…",
-  },
-  en: {
-    tagline: "French and international judo news",
-    searchPlaceholder: "Search…",
-    catAll: "All",
-    catCompet: "Competitions",
-    catEquipe: "French Team",
-    catGrade: "🥋 Grade Exams",
-    catPatch: "📋 Patch Notes",
-    sourcesTitle: "Sources",
-    statsArticles: "articles",
-    statsSources: "sources",
-    statsRubriques: "sections",
-    patchSeason: "PATCH NOTES · SEASON 2025-2026",
-    patchTitle: "Official Rules by Age Category",
-    patchSubtitle: "FFJudo / IJF data — updated for season 2025-2026",
-    patchEdit: "✎ Edit",
-    patchSource: "Source: FFJudo / IJF · Official rules season 2025-2026 · AI pre-filled data",
-    gradeSeason: "GRADE EXAMS · SEASON 2025-2026",
-    gradeTitle: "Dan Grades — 1st to 10th",
-    gradeSubtitle: "Official FFJudo / IJF requirements — updated for season 2025-2026",
-    gradeSource: "Source: FFJudo / IJF · Official requirements season 2025-2026 · Verified data",
-    gradePrev: "← Previous Grade",
-    gradeNext: "Next Grade →",
-    translatingContent: "Translating content…",
-    sidebarStats: "In numbers",
-    readMore: "Read original article ↗",
-    readFull: "Read full article ↗",
-    close: "✕ Close",
-    noResult: "No articles match your selection.",
-    fallback: "API unavailable — showing last saved articles.",
-    refreshLabel: (t) => `Updated at ${t} · Auto-refresh every 30 min`,
-    refreshBtn: "↻ Refresh",
-    refreshing: "↻ Refreshing…",
-    loading: "Loading articles…",
-    translating: "Translating…",
-  },
-  es: {
-    tagline: "La actualidad del judo francés e internacional",
-    searchPlaceholder: "Buscar…",
-    catAll: "Todas",
-    catCompet: "Competiciones",
-    catEquipe: "Equipo de Francia",
-    catGrade: "🥋 Paso de grado",
-    catPatch: "📋 Patch Notes",
-    sourcesTitle: "Fuentes",
-    statsArticles: "artículos",
-    statsSources: "fuentes",
-    statsRubriques: "secciones",
-    patchSeason: "PATCH NOTES · TEMPORADA 2025-2026",
-    patchTitle: "Reglas oficiales por categoría de edad",
-    patchSubtitle: "Datos FFJudo / IJF — actualizados para la temporada 2025-2026",
-    patchEdit: "✎ Editar",
-    patchSource: "Fuente: FFJudo / IJF · Reglamento oficial temporada 2025-2026 · Datos pre-rellenados por IA",
-    gradeSeason: "PASO DE GRADO · TEMPORADA 2025-2026",
-    gradeTitle: "Grados Dan — del 1º al 10º",
-    gradeSubtitle: "Condiciones oficiales FFJudo / IJF — actualizadas temporada 2025-2026",
-    gradeSource: "Fuente: FFJudo / IJF · Condiciones oficiales temporada 2025-2026 · Datos verificados",
-    gradePrev: "← Grado anterior",
-    gradeNext: "Grado siguiente →",
-    translatingContent: "Traduciendo contenido…",
-    sidebarStats: "En cifras",
-    readMore: "Leer artículo original ↗",
-    readFull: "Leer artículo completo ↗",
-    close: "✕ Cerrar",
-    noResult: "Ningún artículo corresponde a su selección.",
-    fallback: "API no disponible — mostrando últimos artículos guardados.",
-    refreshLabel: (t) => `Actualizado a las ${t} · Actualización automática cada 30 min`,
-    refreshBtn: "↻ Actualizar",
-    refreshing: "↻ Actualizando…",
-    loading: "Cargando artículos…",
-    translating: "Traduciendo…",
-  },
-  de: {
-    tagline: "Französische und internationale Judo-Nachrichten",
-    searchPlaceholder: "Suchen…",
-    catAll: "Alle",
-    catCompet: "Wettkämpfe",
-    catEquipe: "Französisches Team",
-    catGrade: "🥋 Gürtelprüfung",
-    catPatch: "📋 Patch Notes",
-    sourcesTitle: "Quellen",
-    statsArticles: "Artikel",
-    statsSources: "Quellen",
-    statsRubriques: "Rubriken",
-    patchSeason: "PATCH NOTES · SAISON 2025-2026",
-    patchTitle: "Offizielle Regeln nach Alterskategorie",
-    patchSubtitle: "FFJudo / IJF-Daten — aktualisiert für Saison 2025-2026",
-    patchEdit: "✎ Bearbeiten",
-    patchSource: "Quelle: FFJudo / IJF · Offizielles Regelwerk Saison 2025-2026 · KI-vorbefüllte Daten",
-    gradeSeason: "GÜRTELPRÜFUNG · SAISON 2025-2026",
-    gradeTitle: "Dan-Grade — 1. bis 10.",
-    gradeSubtitle: "Offizielle FFJudo / IJF-Bedingungen — aktualisiert Saison 2025-2026",
-    gradeSource: "Quelle: FFJudo / IJF · Offizielle Bedingungen Saison 2025-2026 · Geprüfte Daten",
-    gradePrev: "← Vorheriger Grad",
-    gradeNext: "Nächster Grad →",
-    translatingContent: "Inhalt wird übersetzt…",
-    sidebarStats: "In Zahlen",
-    readMore: "Originalartikel lesen ↗",
-    readFull: "Vollständigen Artikel lesen ↗",
-    close: "✕ Schließen",
-    noResult: "Keine Artikel entsprechen Ihrer Auswahl.",
-    fallback: "API nicht verfügbar — letzte gespeicherte Artikel werden angezeigt.",
-    refreshLabel: (t) => `Aktualisiert um ${t} · Automatische Aktualisierung alle 30 Min.`,
-    refreshBtn: "↻ Aktualisieren",
-    refreshing: "↻ Wird aktualisiert…",
-    loading: "Artikel werden geladen…",
-    translating: "Übersetzung läuft…",
-  },
+const T = {
+  tagline: "L'actualité du judo français et international",
+  searchPlaceholder: "Rechercher…",
+  catAll: "Toutes",
+  catCompet: "Compétitions",
+  catEquipe: "Équipe de France",
+  catGrade: "🥋 Passage de grade",
+  catPatch: "📋 Patch Notes",
+  sourcesTitle: "Sources",
+  statsArticles: "articles",
+  statsSources: "sources",
+  statsRubriques: "rubriques",
+  patchSeason: "PATCH NOTES · SAISON 2025-2026",
+  patchTitle: "Règles officielles par catégorie d'âge",
+  patchSubtitle: "Données FFJudo / IJF — mises à jour saison 2025-2026",
+  patchEdit: "✎ Modifier",
+  patchSource: "Source : FFJudo / IJF · Règlement officiel saison 2025-2026 · Données pré-remplies par IA",
+  gradeSeason: "PASSAGE DE GRADE · SAISON 2025-2026",
+  gradeTitle: "Grades Dan — du 1er au 10e",
+  gradeSubtitle: "Conditions officielles FFJudo / IJF — mises à jour saison 2025-2026",
+  gradeSource: "Source : FFJudo / IJF · Conditions officielles saison 2025-2026 · Données vérifiées",
+  gradePrev: "← Grade précédent",
+  gradeNext: "Grade suivant →",
+  translatingContent: "Traduction du contenu…",
+  sidebarStats: "En chiffres",
+  readMore: "Lire l'article original ↗",
+  readFull: "Lire l'article complet ↗",
+  close: "✕ Fermer",
+  noResult: "Aucun article ne correspond à votre sélection.",
+  fallback: "Connexion à l'API indisponible — affichage des derniers articles enregistrés.",
+  refreshLabel: (t) => `Mis à jour à ${t} · Actualisation automatique toutes les 30 min`,
+  refreshBtn: "↻ Actualiser",
+  refreshing: "↻ Actualisation…",
+  loading: "Chargement des articles…",
+  translating: "Traduction en cours…",
 };
 
-/* Contexte langue global */
-const LangContext = React.createContext({ lang:"fr", t: I18N.fr });
+
+/* Contexte global */
+const LangContext = React.createContext({ t: T });
 
 function getCategories(t) {
   return [
@@ -711,15 +596,11 @@ function needsTranslation(article) {
   return !FR_SOURCES.includes(article.source);
 }
 
-async function translateArticles(articles, targetLang = "fr") {
+async function translateArticles(articles) {
   const toTranslate = articles.filter(needsTranslation);
   if (toTranslate.length === 0) return articles;
 
-  // Prépare le batch : id + title + body
   const batch = toTranslate.map(a => ({ id: a.id, title: a.title, body: a.body }));
-
-  const langNames = { fr: "French", en: "English", es: "Spanish", de: "German" };
-  const targetLangName = langNames[targetLang] || "French";
 
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -727,13 +608,13 @@ async function translateArticles(articles, targetLang = "fr") {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
+        max_tokens: 2000,
         messages: [{
           role: "user",
-          content: `You are a combat sports translator. Translate the following judo article titles and summaries into natural, fluent ${targetLangName}. Respond ONLY with valid JSON, no backticks or extra text, exactly this format:
+          content: `Tu es un traducteur spécialisé en sport de combat. Traduis en français naturel et fluide les titres et résumés suivants (judo). Réponds UNIQUEMENT en JSON valide, sans backticks ni texte autour, avec exactement ce format :
 [{"id":"...","title":"...","body":"..."}]
 
-Articles to translate:
+Articles à traduire :
 ${JSON.stringify(batch)}`
         }]
       })
@@ -754,78 +635,6 @@ ${JSON.stringify(batch)}`
   } catch (err) {
     console.warn("Traduction échouée, articles en langue originale :", err.message);
     return articles; // fallback silencieux
-  }
-}
-
-/* ══════════════════════════════════════════
-   TRADUCTION DU CONTENU STATIQUE (Patch Notes + Grades)
-   Cache en mémoire par langue pour éviter les re-appels
-══════════════════════════════════════════ */
-const _staticCache = {}; // { "en:patch": [...], "en:grade": [...] }
-
-/* Traduit un chunk via un appel Claude (max_tokens élevé pour éviter la troncature) */
-async function translateBatch(batch, targetLang, type) {
-  const langNames = { en:"English", es:"Spanish", de:"German" };
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 8000,
-      messages: [{
-        role: "user",
-        content: `You are a judo sports translator. Translate the following judo ${type} data to ${langNames[targetLang] || targetLang}. Keep technical judo terms (ippon, waza-ari, shido, kansetsu-waza, shime-waza, makikomi, sutemi-waza, ne-waza, etc.) in Japanese. Respond ONLY with a valid JSON array, no markdown backticks, no preamble, no trailing text. Exact format:
-[{"id":"...","intro":"...","sections":[{"title":"...","text":"..."}]}]
-
-Data:
-${JSON.stringify(batch)}`
-      }]
-    })
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const json = await res.json();
-  if (json.error) throw new Error(json.error.message || "API error");
-  const raw = json.content?.map(b => b.text || "").join("") || "";
-  const clean = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
-  return JSON.parse(clean);
-}
-
-async function translateStaticContent(data, targetLang, type) {
-  if (targetLang === "fr") return data;
-  const cacheKey = `${targetLang}:${type}`;
-  if (_staticCache[cacheKey]) return _staticCache[cacheKey];
-
-  // Découpe en chunks de 4 items pour ne pas dépasser la limite de tokens
-  const CHUNK_SIZE = 4;
-  const chunks = [];
-  for (let i = 0; i < data.length; i += CHUNK_SIZE) {
-    chunks.push(data.slice(i, i + CHUNK_SIZE));
-  }
-
-  try {
-    const translatedChunks = await Promise.all(
-      chunks.map(chunk => {
-        const batch = chunk.map(item => ({
-          id: item.id,
-          intro: item.intro,
-          sections: item.sections.map(s => ({ title: s.title, text: s.text }))
-        }));
-        return translateBatch(batch, targetLang, type);
-      })
-    );
-
-    const map = {};
-    translatedChunks.flat().forEach(item => { map[item.id] = item; });
-
-    const result = data.map(item => {
-      if (!map[item.id]) return item;
-      return { ...item, intro: map[item.id].intro, sections: map[item.id].sections };
-    });
-    _staticCache[cacheKey] = result;
-    return result;
-  } catch(err) {
-    console.warn("Traduction contenu statique échouée :", err);
-    return data;
   }
 }
 
@@ -1227,40 +1036,10 @@ function PassageGradePage({ gradesList, translatingStatic }) {
   );
 }
 
-/* ── Sélecteur de langue ── */
-function LangSelector({ lang, setLang }) {
-  const [open, setOpen] = useState(false);
-  const current = LANGS.find(l => l.code === lang) || LANGS[0];
-  return (
-    <div style={{ position:"relative" }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.62rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--paper)", background:"rgba(255,255,255,0.12)", border:"1px solid rgba(255,255,255,0.25)", borderRadius:3, padding:"3px 9px", cursor:"pointer", display:"flex", alignItems:"center", gap:5 }}>
-        <span>{current.flag}</span>
-        <span>{current.label}</span>
-        <span style={{ fontSize:"0.5rem", opacity:0.7 }}>{open ? "▲" : "▼"}</span>
-      </button>
-      {open && (
-        <div style={{ position:"absolute", right:0, top:"calc(100% + 4px)", background:"var(--ink)", border:"1px solid rgba(255,255,255,0.15)", borderRadius:3, zIndex:999, minWidth:130, overflow:"hidden", boxShadow:"0 4px 20px rgba(0,0,0,0.4)" }}>
-          {LANGS.map(l => (
-            <button key={l.code} onClick={() => { setLang(l.code); setOpen(false); }}
-              style={{ display:"flex", alignItems:"center", gap:8, width:"100%", padding:"8px 14px", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight: lang===l.code ? 700 : 400, letterSpacing:"0.1em", textTransform:"uppercase", color: lang===l.code ? "var(--accent)" : "var(--paper)", background: lang===l.code ? "rgba(200,16,46,0.15)" : "none", border:"none", cursor:"pointer", borderBottom:"1px solid rgba(255,255,255,0.06)", transition:"background 0.1s" }}>
-              <span>{l.flag}</span>
-              <span>{l.full}</span>
-              {lang===l.code && <span style={{ marginLeft:"auto", fontSize:"0.5rem", color:"var(--accent)" }}>✓</span>}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 /* ── Header ── */
-function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery, sources, lang, setLang }) {
+function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery, sources }) {
   const { t } = React.useContext(LangContext);
-  const localeMap = { fr:"fr-FR", en:"en-GB", es:"es-ES", de:"de-DE" };
-  const today = new Date().toLocaleDateString(localeMap[lang]||"fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  const today = new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   const categories = getCategories(t);
   return (
     <header style={{ background:"var(--paper)", borderBottom:"1px solid var(--rule)", position:"sticky", top:0, zIndex:200 }}>
@@ -1269,7 +1048,6 @@ function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery
         <div className="top-sources">
           {sources.map(s=><span key={s} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", letterSpacing:"0.12em", textTransform:"uppercase", opacity:0.5 }}>{s}</span>)}
         </div>
-        <LangSelector lang={lang} setLang={setLang} />
       </div>
       <div className="masthead">
         <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:12 }}>
@@ -1298,11 +1076,11 @@ function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery
 
 /* ── Sidebar ── */
 function Sidebar({ activeSource, setActiveSource, sourceList, count }) {
-  const { t, lang } = React.useContext(LangContext);
+  const { t } = React.useContext(LangContext);
   return (
     <aside className="sidebar">
       <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)", marginBottom:12, paddingBottom:8, borderBottom:"2px solid var(--ink)" }}>{t.sourcesTitle}</div>
-      {[{id:"all",name: {fr:"Toutes les sources",en:"All sources",es:"Todas las fuentes",de:"Alle Quellen"}[lang] || "Toutes les sources",color:"var(--ink)"},...sourceList].map(src=>(
+      {[{id:"all",name:"Toutes les sources",color:"var(--ink)"},...sourceList].map(src=>(
         <button key={src.id} onClick={()=>setActiveSource(src.id)} style={{ display:"block", width:"100%", textAlign:"left", fontFamily:"'Source Serif 4',serif", fontSize:"0.78rem", color:activeSource===src.id?(src.color||"var(--accent)"):"var(--muted)", fontWeight:activeSource===src.id?600:400, padding:"5px 0", borderBottom:"1px solid var(--cream)", transition:"color 0.15s", background:"none", border:"none", cursor:"pointer" }}>
           {activeSource===src.id&&<span style={{color:"var(--accent)",marginRight:4,fontSize:"0.6rem"}}>▶</span>}{src.name}
         </button>
@@ -1336,71 +1114,23 @@ function App() {
   const [searchQuery,    setSearchQuery]    = useState("");
   const [openArticle,    setOpenArticle]    = useState(null);
   const [patchList,      setPatchList]      = useState(() => loadPatchNotes());
-  const [lang,           setLang]           = useState(() => localStorage.getItem("judoactu_lang") || "fr");
-  const [translatedPatch, setTranslatedPatch] = useState(null);
-  const [translatedGrades, setTranslatedGrades] = useState(null);
-  const [translatingStatic, setTranslatingStatic] = useState(() => (localStorage.getItem("judoactu_lang") || "fr") !== "fr");
   const timerRef = useRef(null);
-
-  const t = I18N[lang] || I18N.fr;
-
-  const handleSetLang = (code) => {
-    setLang(code);
-    try { localStorage.setItem("judoactu_lang", code); } catch(e) {}
-  };
-
-  /* Traduction du contenu statique quand la langue change */
-  useEffect(() => {
-    if (lang === "fr") {
-      setTranslatedPatch(null);
-      setTranslatedGrades(null);
-      return;
-    }
-    let cancelled = false;
-    setTranslatingStatic(true);
-    Promise.all([
-      translateStaticContent(patchList, lang, "patch-notes"),
-      translateStaticContent(GRADES_DAN, lang, "grades")
-    ]).then(([patch, grades]) => {
-      if (cancelled) return;
-      setTranslatedPatch(patch);
-      setTranslatedGrades(grades);
-      setTranslatingStatic(false);
-    }).catch(() => {
-      if (!cancelled) setTranslatingStatic(false);
-    });
-    return () => { cancelled = true; };
-  }, [lang]);
-
-  // Cache des articles bruts (avant traduction) pour éviter de re-fetcher à chaque changement de langue
   const rawArticlesRef = useRef(null);
-  // Cache des articles traduits par langue
-  const _articleCacheRef = useRef({});
 
-  const load = async (silent=false, targetLang=null) => {
-    const useLang = targetLang || lang;
+  const load = async (silent=false) => {
     if (!silent) setLoading(true);
     else setRefreshing(true);
     try {
-      // Re-fetch les articles bruts seulement si pas encore en cache
       if (!rawArticlesRef.current) {
         rawArticlesRef.current = await fetchFromGoogle();
       }
       const raw = rawArticlesRef.current;
-
-      // Vérifie le cache de traduction pour cette langue
-      if (_articleCacheRef.current[useLang]) {
-        setArticles(_articleCacheRef.current[useLang]);
-      } else {
-        setTranslating(true);
-        const data = await translateArticles(raw, useLang);
-        setTranslating(false);
-        _articleCacheRef.current[useLang] = data;
-        setArticles(data);
-      }
+      setTranslating(true);
+      const data = await translateArticles(raw);
+      setTranslating(false);
+      setArticles(data);
       setIsFallback(false);
-      const localeMap = { fr:"fr-FR", en:"en-GB", es:"es-ES", de:"de-DE" };
-      setLastUpdated(new Date().toLocaleTimeString(localeMap[useLang]||"fr-FR",{hour:"2-digit",minute:"2-digit"}));
+      setLastUpdated(new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}));
     } catch(e) {
       console.warn("API indisponible, fallback :", e.message);
       if (!silent) { setArticles(FALLBACK_ARTICLES); setIsFallback(true); }
@@ -1410,24 +1140,14 @@ function App() {
     }
   };
 
-  // Chargement initial
   useEffect(() => {
     load();
     timerRef.current = setInterval(() => {
-      // Forcer re-fetch complet toutes les 30min
       rawArticlesRef.current = null;
-      _articleCacheRef.current = {};
       load(true);
     }, REFRESH_INTERVAL);
     return () => clearInterval(timerRef.current);
   }, []);
-
-  // Re-traduit les articles quand la langue change (si articles déjà chargés)
-  useEffect(() => {
-    if (rawArticlesRef.current) {
-      load(false, lang);
-    }
-  }, [lang]);
 
   /* Sources uniques extraites des articles */
   const sourceList = [...new Map(articles.map(a=>[a.source,{id:a.source,name:a.sourceName||a.source,color:a.color}])).values()];
@@ -1443,18 +1163,15 @@ function App() {
   const hero      = filtered.find(a=>a.featured==="TRUE"||a.featured===true) || filtered[0];
   const secondary = filtered.filter(a=>a!==hero);
 
-  const activePatchList   = (lang !== "fr" && translatedPatch)   ? translatedPatch   : patchList;
-  const activeGradesList  = (lang !== "fr" && translatedGrades)  ? translatedGrades  : GRADES_DAN;
-
   return (
-    <LangContext.Provider value={{ lang, t }}>
-      <Header activeCategory={activeCategory} setActiveCategory={setActiveCategory} searchQuery={searchQuery} setSearchQuery={setSearchQuery} sources={sourceNames} lang={lang} setLang={handleSetLang} />
+    <LangContext.Provider value={{ t: T }}>
+      <Header activeCategory={activeCategory} setActiveCategory={setActiveCategory} searchQuery={searchQuery} setSearchQuery={setSearchQuery} sources={sourceNames} />
 
       <div className="page-wrap">
         {activeCategory === "patch-notes" ? (
-          <PatchNotesPage patchList={activePatchList} onUpdate={data => { setPatchList(data); savePatchNotes(data); }} translatingStatic={translatingStatic} />
+          <PatchNotesPage patchList={patchList} onUpdate={data => { setPatchList(data); savePatchNotes(data); }} translatingStatic={false} />
         ) : activeCategory === "passage-grade" ? (
-          <PassageGradePage gradesList={activeGradesList} translatingStatic={translatingStatic} />
+          <PassageGradePage gradesList={GRADES_DAN} translatingStatic={false} />
         ) : (
           <>
             {AD}
