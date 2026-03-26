@@ -763,41 +763,60 @@ ${JSON.stringify(batch)}`
 ══════════════════════════════════════════ */
 const _staticCache = {}; // { "en:patch": [...], "en:grade": [...] }
 
+/* Traduit un chunk via un appel Claude (max_tokens élevé pour éviter la troncature) */
+async function translateBatch(batch, targetLang, type) {
+  const langNames = { en:"English", es:"Spanish", de:"German" };
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 8000,
+      messages: [{
+        role: "user",
+        content: `You are a judo sports translator. Translate the following judo ${type} data to ${langNames[targetLang] || targetLang}. Keep technical judo terms (ippon, waza-ari, shido, kansetsu-waza, shime-waza, makikomi, sutemi-waza, ne-waza, etc.) in Japanese. Respond ONLY with a valid JSON array, no markdown backticks, no preamble, no trailing text. Exact format:
+[{"id":"...","intro":"...","sections":[{"title":"...","text":"..."}]}]
+
+Data:
+${JSON.stringify(batch)}`
+      }]
+    })
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const json = await res.json();
+  if (json.error) throw new Error(json.error.message || "API error");
+  const raw = json.content?.map(b => b.text || "").join("") || "";
+  const clean = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+  return JSON.parse(clean);
+}
+
 async function translateStaticContent(data, targetLang, type) {
-  if (targetLang === "fr") return data; // déjà en FR
+  if (targetLang === "fr") return data;
   const cacheKey = `${targetLang}:${type}`;
   if (_staticCache[cacheKey]) return _staticCache[cacheKey];
 
-  // Prépare batch : id + intro + sections[].title + sections[].text
-  const batch = data.map(item => ({
-    id: item.id,
-    intro: item.intro,
-    sections: item.sections.map(s => ({ title: s.title, text: s.text }))
-  }));
+  // Découpe en chunks de 4 items pour ne pas dépasser la limite de tokens
+  const CHUNK_SIZE = 4;
+  const chunks = [];
+  for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+    chunks.push(data.slice(i, i + CHUNK_SIZE));
+  }
 
-  const langNames = { en:"English", es:"Spanish", de:"German" };
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 4000,
-        messages: [{
-          role: "user",
-          content: `You are a judo sports translator. Translate the following judo ${type} data to ${langNames[targetLang] || targetLang}. Keep technical judo terms (ippon, waza-ari, shido, etc.) in Japanese. Respond ONLY with valid JSON, no backticks or extra text, exactly this format:
-[{"id":"...","intro":"...","sections":[{"title":"...","text":"..."}]}]
-
-Data to translate:
-${JSON.stringify(batch)}`
-        }]
+    const translatedChunks = await Promise.all(
+      chunks.map(chunk => {
+        const batch = chunk.map(item => ({
+          id: item.id,
+          intro: item.intro,
+          sections: item.sections.map(s => ({ title: s.title, text: s.text }))
+        }));
+        return translateBatch(batch, targetLang, type);
       })
-    });
-    const json = await res.json();
-    const text = json.content?.map(b => b.text || "").join("") || "";
-    const translated = JSON.parse(text);
+    );
+
     const map = {};
-    translated.forEach(item => { map[item.id] = item; });
+    translatedChunks.flat().forEach(item => { map[item.id] = item; });
+
     const result = data.map(item => {
       if (!map[item.id]) return item;
       return { ...item, intro: map[item.id].intro, sections: map[item.id].sections };
@@ -805,7 +824,7 @@ ${JSON.stringify(batch)}`
     _staticCache[cacheKey] = result;
     return result;
   } catch(err) {
-    console.warn("Traduction contenu statique échouée :", err.message);
+    console.warn("Traduction contenu statique échouée :", err);
     return data;
   }
 }
@@ -1320,7 +1339,7 @@ function App() {
   const [lang,           setLang]           = useState(() => localStorage.getItem("judoactu_lang") || "fr");
   const [translatedPatch, setTranslatedPatch] = useState(null);
   const [translatedGrades, setTranslatedGrades] = useState(null);
-  const [translatingStatic, setTranslatingStatic] = useState(false);
+  const [translatingStatic, setTranslatingStatic] = useState(() => (localStorage.getItem("judoactu_lang") || "fr") !== "fr");
   const timerRef = useRef(null);
 
   const t = I18N[lang] || I18N.fr;
