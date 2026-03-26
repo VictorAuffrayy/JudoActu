@@ -121,13 +121,123 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwBD9BECKQOEq4N-VXER42A
 /* Mise à jour automatique toutes les 30 minutes */
 const REFRESH_INTERVAL = 30 * 60 * 1000;
 
-const CATEGORIES = [
-  { id:"all",            label:"Toutes"             },
-  { id:"compet",         label:"Compétitions"       },
-  { id:"equipe",         label:"Équipe de France"   },
-  { id:"passage-grade",  label:"🥋 Passage de grade" },
-  { id:"patch-notes",    label:"📋 Patch Notes"      },
+/* ══════════════════════════════════════════
+   LANGUES
+══════════════════════════════════════════ */
+const LANGS = [
+  { code:"fr", label:"FR", flag:"🇫🇷", full:"Français" },
+  { code:"en", label:"EN", flag:"🇬🇧", full:"English" },
+  { code:"es", label:"ES", flag:"🇪🇸", full:"Español" },
+  { code:"de", label:"DE", flag:"🇩🇪", full:"Deutsch" },
 ];
+
+const I18N = {
+  fr: {
+    tagline: "L'actualité du judo français et international",
+    searchPlaceholder: "Rechercher…",
+    catAll: "Toutes",
+    catCompet: "Compétitions",
+    catEquipe: "Équipe de France",
+    catGrade: "🥋 Passage de grade",
+    catPatch: "📋 Patch Notes",
+    sourcesTitle: "Sources",
+    statsArticles: "articles",
+    statsSources: "sources",
+    statsRubriques: "rubriques",
+    readMore: "Lire l'article original ↗",
+    readFull: "Lire l'article complet ↗",
+    close: "✕ Fermer",
+    noResult: "Aucun article ne correspond à votre sélection.",
+    fallback: "Connexion à l'API indisponible — affichage des derniers articles enregistrés.",
+    refreshLabel: (t) => `Mis à jour à ${t} · Actualisation automatique toutes les 30 min`,
+    refreshBtn: "↻ Actualiser",
+    refreshing: "↻ Actualisation…",
+    loading: "Chargement des articles…",
+    translating: "Traduction en cours…",
+  },
+  en: {
+    tagline: "French and international judo news",
+    searchPlaceholder: "Search…",
+    catAll: "All",
+    catCompet: "Competitions",
+    catEquipe: "French Team",
+    catGrade: "🥋 Grade Exams",
+    catPatch: "📋 Patch Notes",
+    sourcesTitle: "Sources",
+    statsArticles: "articles",
+    statsSources: "sources",
+    statsRubriques: "sections",
+    readMore: "Read original article ↗",
+    readFull: "Read full article ↗",
+    close: "✕ Close",
+    noResult: "No articles match your selection.",
+    fallback: "API unavailable — showing last saved articles.",
+    refreshLabel: (t) => `Updated at ${t} · Auto-refresh every 30 min`,
+    refreshBtn: "↻ Refresh",
+    refreshing: "↻ Refreshing…",
+    loading: "Loading articles…",
+    translating: "Translating…",
+  },
+  es: {
+    tagline: "La actualidad del judo francés e internacional",
+    searchPlaceholder: "Buscar…",
+    catAll: "Todas",
+    catCompet: "Competiciones",
+    catEquipe: "Equipo de Francia",
+    catGrade: "🥋 Paso de grado",
+    catPatch: "📋 Patch Notes",
+    sourcesTitle: "Fuentes",
+    statsArticles: "artículos",
+    statsSources: "fuentes",
+    statsRubriques: "secciones",
+    readMore: "Leer artículo original ↗",
+    readFull: "Leer artículo completo ↗",
+    close: "✕ Cerrar",
+    noResult: "Ningún artículo corresponde a su selección.",
+    fallback: "API no disponible — mostrando últimos artículos guardados.",
+    refreshLabel: (t) => `Actualizado a las ${t} · Actualización automática cada 30 min`,
+    refreshBtn: "↻ Actualizar",
+    refreshing: "↻ Actualizando…",
+    loading: "Cargando artículos…",
+    translating: "Traduciendo…",
+  },
+  de: {
+    tagline: "Französische und internationale Judo-Nachrichten",
+    searchPlaceholder: "Suchen…",
+    catAll: "Alle",
+    catCompet: "Wettkämpfe",
+    catEquipe: "Französisches Team",
+    catGrade: "🥋 Gürtelprüfung",
+    catPatch: "📋 Patch Notes",
+    sourcesTitle: "Quellen",
+    statsArticles: "Artikel",
+    statsSources: "Quellen",
+    statsRubriques: "Rubriken",
+    readMore: "Originalartikel lesen ↗",
+    readFull: "Vollständigen Artikel lesen ↗",
+    close: "✕ Schließen",
+    noResult: "Keine Artikel entsprechen Ihrer Auswahl.",
+    fallback: "API nicht verfügbar — letzte gespeicherte Artikel werden angezeigt.",
+    refreshLabel: (t) => `Aktualisiert um ${t} · Automatische Aktualisierung alle 30 Min.`,
+    refreshBtn: "↻ Aktualisieren",
+    refreshing: "↻ Wird aktualisiert…",
+    loading: "Artikel werden geladen…",
+    translating: "Übersetzung läuft…",
+  },
+};
+
+/* Contexte langue global */
+const LangContext = React.createContext({ lang:"fr", t: I18N.fr });
+
+function getCategories(t) {
+  return [
+    { id:"all",            label: t.catAll    },
+    { id:"compet",         label: t.catCompet },
+    { id:"equipe",         label: t.catEquipe },
+    { id:"passage-grade",  label: t.catGrade  },
+    { id:"patch-notes",    label: t.catPatch  },
+  ];
+}
 
 /* ══════════════════════════════════════════
    PATCH NOTES — RÈGLES PAR CATÉGORIE D'ÂGE
@@ -618,31 +728,31 @@ function getImg(article) {
 }
 
 function Spinner({ translating }) {
+  const { t } = React.useContext(LangContext);
   return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"6rem 2rem", gap:20 }}>
-      <div style={{ width:36, height:36, border:"3px solid var(--rule)", borderTopColor:"var(--accent)", borderRadius:"50%", animation:"spin 0.8s linear infinite" }} />
-      <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)" }}>
-        {translating ? "Traduction des articles…" : "Chargement des articles…"}
-      </div>
+    <div style={{ textAlign:"center", padding:"5rem 0", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)" }}>
+      <div style={{ width:28, height:28, border:"2px solid var(--rule)", borderTopColor:"var(--accent)", borderRadius:"50%", animation:"spin 0.8s linear infinite", margin:"0 auto 16px" }} />
+      {translating ? t.translating : t.loading}
     </div>
   );
 }
-
 function FallbackBanner() {
+  const { t } = React.useContext(LangContext);
   return (
     <div style={{ background:"#fff8e1", border:"1px solid #ffe082", borderRadius:3, padding:"10px 16px", marginBottom:20, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.08em", color:"#7a6000", display:"flex", alignItems:"center", gap:10 }}>
       <span>⚠️</span>
-      <span>Connexion à l'API indisponible — affichage des derniers articles enregistrés.</span>
+      <span>{t.fallback}</span>
     </div>
   );
 }
 
 function RefreshBanner({ lastUpdated, onRefresh, refreshing }) {
+  const { t } = React.useContext(LangContext);
   return (
     <div style={{ background:"var(--cream)", border:"1px solid var(--rule)", borderRadius:3, padding:"8px 16px", marginBottom:20, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", letterSpacing:"0.08em", color:"var(--muted)", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-      <span>Mis à jour à {lastUpdated} · Actualisation automatique toutes les 30 min</span>
+      <span>{t.refreshLabel(lastUpdated)}</span>
       <button onClick={onRefresh} disabled={refreshing} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color: refreshing ? "var(--rule)" : "var(--accent)", cursor: refreshing ? "default" : "pointer", padding:"4px 10px", border:"1px solid currentColor", borderRadius:2, background:"none" }}>
-        {refreshing ? "↻ Actualisation…" : "↻ Actualiser"}
+        {refreshing ? t.refreshing : t.refreshBtn}
       </button>
     </div>
   );
@@ -650,6 +760,7 @@ function RefreshBanner({ lastUpdated, onRefresh, refreshing }) {
 
 /* ── Cartes articles ── */
 function Hero({ article, onClick }) {
+  const { t } = React.useContext(LangContext);
   const img = getImg(article);
   return (
     <div onClick={()=>onClick(article)} className="fade-up" style={{ cursor:"pointer", borderTop:"3px solid var(--ink)" }}>
@@ -663,7 +774,7 @@ function Hero({ article, onClick }) {
       {article.link && (
         <a href={article.link} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
           style={{ display:"inline-block", marginTop:10, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--accent)", borderBottom:"1px solid var(--accent)" }}>
-          Lire l'article original ↗
+          {t.readMore}
         </a>
       )}
       <div style={{ borderBottom:"1px solid var(--rule)", paddingBottom:20, marginTop:12 }} />
@@ -687,6 +798,7 @@ function Card({ article, index, onClick }) {
 }
 
 function Modal({ article, onClose }) {
+  const { t } = React.useContext(LangContext);
   const img = getImg(article);
   useEffect(() => {
     const h = e => { if (e.key==="Escape") onClose(); };
@@ -701,10 +813,10 @@ function Modal({ article, onClose }) {
         {img
           ? <div style={{ width:"100%", height:300, overflow:"hidden", position:"relative" }}>
               <img src={img} alt={article.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-              <button onClick={onClose} style={{ position:"absolute", top:12, right:12, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--white)", padding:"5px 12px", border:"1px solid rgba(255,255,255,0.6)", borderRadius:2, background:"rgba(0,0,0,0.45)", cursor:"pointer" }}>✕ Fermer</button>
+              <button onClick={onClose} style={{ position:"absolute", top:12, right:12, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--white)", padding:"5px 12px", border:"1px solid rgba(255,255,255,0.6)", borderRadius:2, background:"rgba(0,0,0,0.45)", cursor:"pointer" }}>{t.close}</button>
             </div>
           : <div style={{ display:"flex", justifyContent:"flex-end", padding:"12px 14px 0" }}>
-              <button onClick={onClose} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--muted)", padding:"5px 12px", border:"1px solid var(--rule)", borderRadius:2, background:"none", cursor:"pointer" }}>✕ Fermer</button>
+              <button onClick={onClose} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--muted)", padding:"5px 12px", border:"1px solid var(--rule)", borderRadius:2, background:"none", cursor:"pointer" }}>{t.close}</button>
             </div>
         }
         <div style={{ padding:"1.6rem 1.8rem 0" }}>
@@ -716,7 +828,7 @@ function Modal({ article, onClose }) {
           <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"1rem", fontStyle:"italic", lineHeight:1.7, color:"#2a2828", borderLeft:"3px solid var(--accent)", paddingLeft:16, marginBottom:24 }}>{article.body}</p>
           {article.link && (
             <a href={article.link} target="_blank" rel="noopener noreferrer" style={{ display:"inline-block", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", padding:"10px 20px", background:"var(--accent)", color:"var(--white)", borderRadius:2, marginBottom:24 }}>
-              Lire l'article complet ↗
+              {t.readFull}
             </a>
           )}
         </div>
@@ -954,9 +1066,41 @@ function PassageGradePage() {
   );
 }
 
+/* ── Sélecteur de langue ── */
+function LangSelector({ lang, setLang }) {
+  const [open, setOpen] = useState(false);
+  const current = LANGS.find(l => l.code === lang) || LANGS[0];
+  return (
+    <div style={{ position:"relative" }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.62rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--paper)", background:"rgba(255,255,255,0.12)", border:"1px solid rgba(255,255,255,0.25)", borderRadius:3, padding:"3px 9px", cursor:"pointer", display:"flex", alignItems:"center", gap:5 }}>
+        <span>{current.flag}</span>
+        <span>{current.label}</span>
+        <span style={{ fontSize:"0.5rem", opacity:0.7 }}>{open ? "▲" : "▼"}</span>
+      </button>
+      {open && (
+        <div style={{ position:"absolute", right:0, top:"calc(100% + 4px)", background:"var(--ink)", border:"1px solid rgba(255,255,255,0.15)", borderRadius:3, zIndex:999, minWidth:130, overflow:"hidden", boxShadow:"0 4px 20px rgba(0,0,0,0.4)" }}>
+          {LANGS.map(l => (
+            <button key={l.code} onClick={() => { setLang(l.code); setOpen(false); }}
+              style={{ display:"flex", alignItems:"center", gap:8, width:"100%", padding:"8px 14px", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight: lang===l.code ? 700 : 400, letterSpacing:"0.1em", textTransform:"uppercase", color: lang===l.code ? "var(--accent)" : "var(--paper)", background: lang===l.code ? "rgba(200,16,46,0.15)" : "none", border:"none", cursor:"pointer", borderBottom:"1px solid rgba(255,255,255,0.06)", transition:"background 0.1s" }}>
+              <span>{l.flag}</span>
+              <span>{l.full}</span>
+              {lang===l.code && <span style={{ marginLeft:"auto", fontSize:"0.5rem", color:"var(--accent)" }}>✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── Header ── */
-function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery, sources }) {
-  const today = new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery, sources, lang, setLang }) {
+  const { t } = React.useContext(LangContext);
+  const localeMap = { fr:"fr-FR", en:"en-GB", es:"es-ES", de:"de-DE" };
+  const today = new Date().toLocaleDateString(localeMap[lang]||"fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  const categories = getCategories(t);
   return (
     <header style={{ background:"var(--paper)", borderBottom:"1px solid var(--rule)", position:"sticky", top:0, zIndex:200 }}>
       <div className="top-bar-inner">
@@ -964,6 +1108,7 @@ function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery
         <div className="top-sources">
           {sources.map(s=><span key={s} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", letterSpacing:"0.12em", textTransform:"uppercase", opacity:0.5 }}>{s}</span>)}
         </div>
+        <LangSelector lang={lang} setLang={setLang} />
       </div>
       <div className="masthead">
         <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:12 }}>
@@ -975,14 +1120,14 @@ function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery
             Judo<span style={{color:"var(--accent)"}}>Actu</span>
           </div>
         </div>
-        <div style={{ fontFamily:"'Source Serif 4',serif", fontStyle:"italic", fontSize:"0.78rem", color:"var(--muted)", marginTop:4 }}>L'actualité du judo français et international</div>
+        <div style={{ fontFamily:"'Source Serif 4',serif", fontStyle:"italic", fontSize:"0.78rem", color:"var(--muted)", marginTop:4 }}>{t.tagline}</div>
         <div className="search-wrap">
-          <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder="Rechercher…"
+          <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder={t.searchPlaceholder}
             style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.78rem", fontStyle:"italic", background:"transparent", border:"none", borderBottom:"1px solid var(--rule)", padding:"4px 2px", color:"var(--ink)", width:160, outline:"none" }} />
         </div>
       </div>
       <nav className="nav-bar">
-        {CATEGORIES.map(cat=>(
+        {categories.map(cat=>(
           <button key={cat.id} onClick={()=>setActiveCategory(cat.id)} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:activeCategory===cat.id?700:600, letterSpacing:"0.12em", textTransform:"uppercase", color:activeCategory===cat.id?"var(--accent)":"var(--muted)", padding:"10px 14px", borderBottom:activeCategory===cat.id?"2px solid var(--accent)":"2px solid transparent", transition:"color 0.15s", whiteSpace:"nowrap", background:"none", border:"none", cursor:"pointer" }}>{cat.label}</button>
         ))}
       </nav>
@@ -992,17 +1137,18 @@ function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery
 
 /* ── Sidebar ── */
 function Sidebar({ activeSource, setActiveSource, sourceList, count }) {
+  const { t, lang } = React.useContext(LangContext);
   return (
     <aside className="sidebar">
-      <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)", marginBottom:12, paddingBottom:8, borderBottom:"2px solid var(--ink)" }}>Sources</div>
-      {[{id:"all",name:"Toutes les sources",color:"var(--ink)"},...sourceList].map(src=>(
+      <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)", marginBottom:12, paddingBottom:8, borderBottom:"2px solid var(--ink)" }}>{t.sourcesTitle}</div>
+      {[{id:"all",name: {fr:"Toutes les sources",en:"All sources",es:"Todas las fuentes",de:"Alle Quellen"}[lang] || "Toutes les sources",color:"var(--ink)"},...sourceList].map(src=>(
         <button key={src.id} onClick={()=>setActiveSource(src.id)} style={{ display:"block", width:"100%", textAlign:"left", fontFamily:"'Source Serif 4',serif", fontSize:"0.78rem", color:activeSource===src.id?(src.color||"var(--accent)"):"var(--muted)", fontWeight:activeSource===src.id?600:400, padding:"5px 0", borderBottom:"1px solid var(--cream)", transition:"color 0.15s", background:"none", border:"none", cursor:"pointer" }}>
           {activeSource===src.id&&<span style={{color:"var(--accent)",marginRight:4,fontSize:"0.6rem"}}>▶</span>}{src.name}
         </button>
       ))}
       <div style={{ marginTop:24, paddingTop:16, borderTop:"2px solid var(--ink)" }}>
         <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)", marginBottom:12 }}>En chiffres</div>
-        {[{n:count,label:"articles"},{n:sourceList.length,label:"sources"},{n:CATEGORIES.length-1,label:"rubriques"}].map(({n,label})=>(
+        {[{n:count,label:t.statsArticles},{n:sourceList.length,label:t.statsSources},{n:5-1,label:t.statsRubriques}].map(({n,label})=>(
           <div key={label} style={{marginBottom:10}}>
             <div style={{fontFamily:"'Playfair Display',serif",fontSize:"1.5rem",fontWeight:900,color:"var(--accent)",lineHeight:1}}>{n}</div>
             <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"0.62rem",letterSpacing:"0.1em",textTransform:"uppercase",color:"var(--muted)"}}>{label}</div>
@@ -1029,7 +1175,15 @@ function App() {
   const [searchQuery,    setSearchQuery]    = useState("");
   const [openArticle,    setOpenArticle]    = useState(null);
   const [patchList,      setPatchList]      = useState(() => loadPatchNotes());
+  const [lang,           setLang]           = useState(() => localStorage.getItem("judoactu_lang") || "fr");
   const timerRef = useRef(null);
+
+  const t = I18N[lang] || I18N.fr;
+
+  const handleSetLang = (code) => {
+    setLang(code);
+    try { localStorage.setItem("judoactu_lang", code); } catch(e) {}
+  };
 
   const load = async (silent=false) => {
     if (!silent) setLoading(true);
@@ -1041,7 +1195,8 @@ function App() {
       setTranslating(false);
       setArticles(data);
       setIsFallback(false);
-      setLastUpdated(new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}));
+      const localeMap = { fr:"fr-FR", en:"en-GB", es:"es-ES", de:"de-DE" };
+      setLastUpdated(new Date().toLocaleTimeString(localeMap[lang]||"fr-FR",{hour:"2-digit",minute:"2-digit"}));
     } catch(e) {
       console.warn("API indisponible, fallback :", e.message);
       if (!silent) { setArticles(FALLBACK_ARTICLES); setIsFallback(true); }
@@ -1072,8 +1227,8 @@ function App() {
   const secondary = filtered.filter(a=>a!==hero);
 
   return (
-    <>
-      <Header activeCategory={activeCategory} setActiveCategory={setActiveCategory} searchQuery={searchQuery} setSearchQuery={setSearchQuery} sources={sourceNames} />
+    <LangContext.Provider value={{ lang, t }}>
+      <Header activeCategory={activeCategory} setActiveCategory={setActiveCategory} searchQuery={searchQuery} setSearchQuery={setSearchQuery} sources={sourceNames} lang={lang} setLang={handleSetLang} />
 
       <div className="page-wrap">
         {activeCategory === "patch-notes" ? (
@@ -1089,7 +1244,7 @@ function App() {
             <div className="main-grid">
               <div>
                 {loading ? <Spinner translating={translating} /> : filtered.length===0 ? (
-                  <div style={{ textAlign:"center", padding:"4rem 0", fontFamily:"'Playfair Display',serif", fontStyle:"italic", color:"var(--muted)", fontSize:"1.1rem" }}>Aucun article ne correspond à votre sélection.</div>
+                  <div style={{ textAlign:"center", padding:"4rem 0", fontFamily:"'Playfair Display',serif", fontStyle:"italic", color:"var(--muted)", fontSize:"1.1rem" }}>{t.noResult}</div>
                 ) : <>
                   {hero && <Hero article={hero} onClick={setOpenArticle} />}
                   {secondary.length>0 && <div className="cards-grid">{secondary.slice(0,6).map((a,i)=><Card key={a.id} article={a} index={i} onClick={setOpenArticle}/>)}</div>}
@@ -1111,7 +1266,7 @@ function App() {
       </div>
 
       {openArticle && <Modal article={openArticle} onClose={()=>setOpenArticle(null)} />}
-    </>
+    </LangContext.Provider>
   );
 }
 
