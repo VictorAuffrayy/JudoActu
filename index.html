@@ -596,10 +596,14 @@ async function fetchFromGoogle() {
   const data = await res.json();
   if (!data.articles || data.articles.length === 0) throw new Error("Aucun article");
   /* Nettoyer le body de chaque article pour éliminer tout HTML résiduel */
-  return data.articles.map(a => ({
-    ...a,
-    body: cleanBodyText(a.body),
-  }));
+  return data.articles.map(a => {
+    let body = cleanBodyText(a.body);
+    // Si le body est vide, une URL nue, ou trop court pour être utile → on le vide
+    const isUseless = !body
+      || /^https?:\/\/\S+$/.test(body)
+      || body.replace(/\s/g,"").length < 20;
+    return { ...a, body: isUseless ? "" : body };
+  });
 }
 
 /* ══════════════════════════════════════════
@@ -747,7 +751,7 @@ function Hero({ article, onClick }) {
       </div>}
       <Kicker text={article.kicker || article.sourceName} />
       <h2 style={{ fontFamily:"'Playfair Display',Georgia,serif", fontSize:"clamp(1.5rem,4vw,2.6rem)", fontWeight:900, lineHeight:1.12, letterSpacing:"-0.01em", marginBottom:12, maxWidth:720 }}>{article.title}</h2>
-      <p style={{ fontFamily:"'Source Serif 4',Georgia,serif", fontSize:"1rem", lineHeight:1.65, color:"#333", maxWidth:660, fontStyle:"italic" }}>{(article.body||"").slice(0,200)}…</p>
+      <p style={{ fontFamily:"'Source Serif 4',Georgia,serif", fontSize:"1rem", lineHeight:1.65, color:"#333", maxWidth:660, fontStyle:"italic" }}>{article.body ? (article.body.slice(0,200) + "…") : ""}</p>
       <Dateline article={article} />
       {article.link && (
         <a href={article.link} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
@@ -769,7 +773,7 @@ function Card({ article, index, onClick }) {
       </div>}
       <Kicker text={article.kicker || article.sourceName} />
       <h3 style={{ fontFamily:"'Playfair Display',Georgia,serif", fontSize:"1rem", fontWeight:700, lineHeight:1.28, letterSpacing:"-0.005em", marginBottom:5 }}>{article.title}</h3>
-      <p style={{ fontSize:"0.8rem", color:"var(--muted)", lineHeight:1.5, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>{(article.body||"").slice(0,110)}…</p>
+      <p style={{ fontSize:"0.8rem", color:"var(--muted)", lineHeight:1.5, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>{article.body ? (article.body.slice(0,110) + "…") : ""}</p>
       <Dateline article={article} />
     </div>
   );
