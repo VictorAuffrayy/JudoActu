@@ -148,7 +148,6 @@ const T = {
   gradeSource: "Source : FFJudo / IJF · Conditions officielles saison 2025-2026 · Données vérifiées",
   gradePrev: "← Grade précédent",
   gradeNext: "Grade suivant →",
-  translatingContent: "Traduction du contenu…",
   sidebarStats: "En chiffres",
   readMore: "Lire l'article original ↗",
   readFull: "Lire l'article complet ↗",
@@ -159,7 +158,6 @@ const T = {
   refreshBtn: "↻ Actualiser",
   refreshing: "↻ Actualisation…",
   loading: "Chargement des articles…",
-  translating: "Traduction en cours…",
 };
 
 
@@ -584,60 +582,6 @@ async function fetchFromGoogle() {
   return data.articles;
 }
 
-/* ══════════════════════════════════════════
-   TRADUCTION AUTO EN FRANÇAIS VIA CLAUDE
-   — 1 seul appel batch pour tous les articles non-FR
-══════════════════════════════════════════ */
-
-// Sources déjà en français — pas besoin de traduire
-const FR_SOURCES = ["ffjudo", "lequipe", "eurosport", "judoside"];
-
-function needsTranslation(article) {
-  return !FR_SOURCES.includes(article.source);
-}
-
-async function translateArticles(articles) {
-  const toTranslate = articles.filter(needsTranslation);
-  if (toTranslate.length === 0) return articles;
-
-  const batch = toTranslate.map(a => ({ id: a.id, title: a.title, body: a.body }));
-
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 2000,
-        messages: [{
-          role: "user",
-          content: `Tu es un traducteur spécialisé en sport de combat. Traduis en français naturel et fluide les titres et résumés suivants (judo). Réponds UNIQUEMENT en JSON valide, sans backticks ni texte autour, avec exactement ce format :
-[{"id":"...","title":"...","body":"..."}]
-
-Articles à traduire :
-${JSON.stringify(batch)}`
-        }]
-      })
-    });
-
-    const data = await res.json();
-    const text = data.content?.map(b => b.text || "").join("") || "";
-    const translated = JSON.parse(text);
-
-    // Fusionne les traductions dans les articles originaux
-    const map = {};
-    translated.forEach(t => { map[t.id] = t; });
-
-    return articles.map(a => {
-      if (map[a.id]) return { ...a, title: map[a.id].title, body: map[a.id].body };
-      return a;
-    });
-  } catch (err) {
-    console.warn("Traduction échouée, articles en langue originale :", err.message);
-    return articles; // fallback silencieux
-  }
-}
-
 /* ── Micro composants ── */
 function Badge({ sourceId, color, short }) {
   const c = color || "#888";
@@ -663,12 +607,12 @@ function getImg(article) {
   return article.img || null;
 }
 
-function Spinner({ translating }) {
+function Spinner() {
   const { t } = React.useContext(LangContext);
   return (
     <div style={{ textAlign:"center", padding:"5rem 0", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)" }}>
       <div style={{ width:28, height:28, border:"2px solid var(--rule)", borderTopColor:"var(--accent)", borderRadius:"50%", animation:"spin 0.8s linear infinite", margin:"0 auto 16px" }} />
-      {translating ? t.translating : t.loading}
+      {t.loading}
     </div>
   );
 }
@@ -822,27 +766,18 @@ function AdminPNModal({ patchList, onSave, onClose }) {
   );
 }
 
-function PatchNotesPage({ patchList, onUpdate, translatingStatic }) {
+function PatchNotesPage({ patchList, onUpdate }) {
   const { t } = React.useContext(LangContext);
   const [activeId, setActiveId]   = useState(patchList[0]?.id || null);
   const [showAdmin, setShowAdmin] = useState(false);
   const cat = patchList.find(p => p.id === activeId) || patchList[0];
 
-  // Reset activeId if patchList changes (ex: langue changée)
+  // Reset activeId if patchList changes
   useEffect(() => {
     if (!patchList.find(p => p.id === activeId)) {
       setActiveId(patchList[0]?.id || null);
     }
   }, [patchList]);
-
-  if (translatingStatic) {
-    return (
-      <div style={{ textAlign:"center", padding:"5rem 0", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)" }}>
-        <div style={{ width:28, height:28, border:"2px solid var(--rule)", borderTopColor:"var(--accent)", borderRadius:"50%", animation:"spin 0.8s linear infinite", margin:"0 auto 16px" }} />
-        {t.translatingContent}
-      </div>
-    );
-  }
 
   return (
     <>
@@ -930,26 +865,17 @@ function PatchNotesPage({ patchList, onUpdate, translatingStatic }) {
 }
 
 /* ══ PASSAGE DE GRADE PAGE ══ */
-function PassageGradePage({ gradesList, translatingStatic }) {
+function PassageGradePage({ gradesList }) {
   const { t } = React.useContext(LangContext);
   const [activeDan, setActiveDan] = useState(gradesList[0].id);
   const grade = gradesList.find(g => g.id === activeDan) || gradesList[0];
 
-  // Reset si la liste change (changement de langue)
+  // Reset si la liste change
   useEffect(() => {
     if (!gradesList.find(g => g.id === activeDan)) {
       setActiveDan(gradesList[0].id);
     }
   }, [gradesList]);
-
-  if (translatingStatic) {
-    return (
-      <div style={{ textAlign:"center", padding:"5rem 0", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)" }}>
-        <div style={{ width:28, height:28, border:"2px solid var(--rule)", borderTopColor:"var(--accent)", borderRadius:"50%", animation:"spin 0.8s linear infinite", margin:"0 auto 16px" }} />
-        {t.translatingContent}
-      </div>
-    );
-  }
 
   return (
     <>
@@ -1105,7 +1031,6 @@ const AD = <div style={{ background:"var(--cream)", border:"1px dashed var(--rul
 function App() {
   const [articles,       setArticles]       = useState([]);
   const [loading,        setLoading]        = useState(true);
-  const [translating,    setTranslating]    = useState(false);
   const [refreshing,     setRefreshing]     = useState(false);
   const [isFallback,     setIsFallback]     = useState(false);
   const [lastUpdated,    setLastUpdated]    = useState(null);
@@ -1115,20 +1040,13 @@ function App() {
   const [openArticle,    setOpenArticle]    = useState(null);
   const [patchList,      setPatchList]      = useState(() => loadPatchNotes());
   const timerRef = useRef(null);
-  const rawArticlesRef = useRef(null);
 
   const load = async (silent=false) => {
     if (!silent) setLoading(true);
     else setRefreshing(true);
     try {
-      if (!rawArticlesRef.current) {
-        rawArticlesRef.current = await fetchFromGoogle();
-      }
-      const raw = rawArticlesRef.current;
-      setTranslating(true);
-      const data = await translateArticles(raw);
-      setTranslating(false);
-      setArticles(data);
+      const raw = await fetchFromGoogle();
+      setArticles(raw);
       setIsFallback(false);
       setLastUpdated(new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}));
     } catch(e) {
@@ -1143,7 +1061,6 @@ function App() {
   useEffect(() => {
     load();
     timerRef.current = setInterval(() => {
-      rawArticlesRef.current = null;
       load(true);
     }, REFRESH_INTERVAL);
     return () => clearInterval(timerRef.current);
@@ -1169,9 +1086,9 @@ function App() {
 
       <div className="page-wrap">
         {activeCategory === "patch-notes" ? (
-          <PatchNotesPage patchList={patchList} onUpdate={data => { setPatchList(data); savePatchNotes(data); }} translatingStatic={false} />
+          <PatchNotesPage patchList={patchList} onUpdate={data => { setPatchList(data); savePatchNotes(data); }} />
         ) : activeCategory === "passage-grade" ? (
-          <PassageGradePage gradesList={GRADES_DAN} translatingStatic={false} />
+          <PassageGradePage gradesList={GRADES_DAN} />
         ) : (
           <>
             {AD}
@@ -1180,7 +1097,7 @@ function App() {
 
             <div className="main-grid">
               <div>
-                {loading ? <Spinner translating={translating} /> : filtered.length===0 ? (
+                {loading ? <Spinner /> : filtered.length===0 ? (
                   <div style={{ textAlign:"center", padding:"4rem 0", fontFamily:"'Playfair Display',serif", fontStyle:"italic", color:"var(--muted)", fontSize:"1.1rem" }}>{t.noResult}</div>
                 ) : <>
                   {hero && <Hero article={hero} onClick={setOpenArticle} />}
