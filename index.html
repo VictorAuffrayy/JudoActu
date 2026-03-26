@@ -578,7 +578,8 @@ const FALLBACK_ARTICLES = [
 function cleanBodyText(str) {
   if (!str) return "";
   return str
-    .replace(/<[^>]+>/g, "")          // supprime toutes les balises HTML
+    .replace(/<[^>]+>/g, " ")         // supprime toutes les balises HTML
+    .replace(/https?:\/\/\S+/g, " ")  // supprime les URLs nues (Google News, etc.)
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
@@ -597,12 +598,11 @@ async function fetchFromGoogle() {
   if (!data.articles || data.articles.length === 0) throw new Error("Aucun article");
   /* Nettoyer le body de chaque article pour éliminer tout HTML résiduel */
   return data.articles.map(a => {
-    let body = cleanBodyText(a.body);
-    // Si le body est vide, une URL nue, ou trop court pour être utile → on le vide
-    const isUseless = !body
-      || /^https?:\/\/\S+$/.test(body)
-      || body.replace(/\s/g,"").length < 20;
-    return { ...a, body: isUseless ? "" : body };
+    const body = cleanBodyText(a.body);
+    // Corps inutile = vide, trop court, ou qui ne contient que des mots du titre
+    const useless = !body || body.length < 25
+      || body.replace(/\s/g,"") === (a.title||"").replace(/\s/g,"");
+    return { ...a, body: useless ? "" : body };
   });
 }
 
