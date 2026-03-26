@@ -574,12 +574,32 @@ const FALLBACK_ARTICLES = [
 /* ══════════════════════════════════════════
    FETCH DEPUIS GOOGLE APPS SCRIPT
 ══════════════════════════════════════════ */
+/* Nettoie tout HTML résiduel dans une chaîne de texte */
+function cleanBodyText(str) {
+  if (!str) return "";
+  return str
+    .replace(/<[^>]+>/g, "")          // supprime toutes les balises HTML
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#\d+;/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 async function fetchFromGoogle() {
   const res  = await fetch(API_URL);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
   if (!data.articles || data.articles.length === 0) throw new Error("Aucun article");
-  return data.articles;
+  /* Nettoyer le body de chaque article pour éliminer tout HTML résiduel */
+  return data.articles.map(a => ({
+    ...a,
+    body: cleanBodyText(a.body),
+  }));
 }
 
 /* ══════════════════════════════════════════
