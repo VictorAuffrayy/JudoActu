@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JudoActu — L'actualité du judo français et international</title>
+  <meta name="description" content="JudoActu : toute l'actualité du judo en français — compétitions, résultats, Grand Slam, championnats du monde, équipe de France, IJF, portraits de judokas." />
+  <meta name="keywords" content="judo, actualité judo, judo france, équipe de france judo, grand slam judo, championnats monde judo, IJF, FF judo, teddy riner, clarisse agbegnenou, judo compétition, résultats judo, judo international, judoka, ippon, tatami" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="JudoActu" />
+  <link rel="canonical" href="https://judoactu.netlify.app/" />
+
+  <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://judoactu.netlify.app/" />
+  <meta property="og:title" content="JudoActu — L'actualité du judo français et international" />
+  <meta property="og:description" content="Toute l'actualité du judo en un seul endroit : compétitions, résultats, Grand Slam, équipe de France et actualités internationales." />
+  <meta property="og:image" content="https://judoactu.netlify.app/favicon.svg" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:site_name" content="JudoActu" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="JudoActu — L'actualité du judo français et international" />
+  <meta name="twitter:description" content="Toute l'actualité du judo en un seul endroit : compétitions, résultats, Grand Slam, équipe de France." />
+  <meta name="twitter:image" content="https://judoactu.netlify.app/favicon.svg" />
+
+  <!-- Données structurées JSON-LD (Google) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "JudoActu",
+    "url": "https://judoactu.netlify.app/",
+    "description": "Toute l'actualité du judo français et international : compétitions, résultats, Grand Slam, équipe de France.",
+    "inLanguage": "fr-FR",
+    "publisher": {
+      "@type": "Organization",
+      "name": "JudoActu",
+      "url": "https://judoactu.netlify.app/"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://judoactu.netlify.app/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="google-site-verification" content="4kTvTAez4LKL1redZ61SesRN3Oc-iZr5fZq7HvT2Shw" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7691067607185684" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #111010; --paper: #f5f0e8; --cream: #ede8dc;
+      --rule: #c8c0b0; --muted: #7a7166; --accent: #c8102e; --white: #ffffff;
+    }
+    body { background: var(--paper); color: var(--ink); font-family: 'Source Serif 4', Georgia, serif; -webkit-font-smoothing: antialiased; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    a { text-decoration: none; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes spin   { to { transform: rotate(360deg); } }
+    .fade-up { animation: fadeUp 0.4s ease both; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--rule); }
+    .img-wrap { overflow: hidden; }
+    .img-wrap img { transition: transform 0.5s ease; display:block; width:100%; height:100%; object-fit:cover; }
+    .img-wrap:hover img { transform: scale(1.04); }
+    .card { transition: opacity 0.2s; }
+    .card:hover { opacity: 0.78; }
+
+    .top-bar-inner { display:flex; justify-content:space-between; align-items:center; padding:5px 24px; background:var(--ink); color:var(--paper); flex-wrap:wrap; gap:6px; }
+    .masthead      { padding:18px 24px 12px; text-align:center; border-bottom:3px double var(--ink); position:relative; }
+    .nav-bar       { display:flex; justify-content:center; padding:0 24px; border-bottom:1px solid var(--rule); overflow-x:auto; }
+    .page-wrap     { max-width:1280px; margin:0 auto; padding:28px 24px; }
+    .main-grid     { display:grid; grid-template-columns:1fr 200px; gap:32px; }
+    .cards-grid    { display:grid; grid-template-columns:repeat(3,1fr); gap:0 28px; }
+    .sidebar       { border-left:1px solid var(--rule); padding-left:20px; }
+    .hero-img      { height:420px; }
+    .card-img      { height:140px; }
+    .search-wrap   { position:absolute; right:24px; top:50%; transform:translateY(-50%); }
+    .top-sources   { display:flex; gap:16px; flex-wrap:wrap; }
+
+    @media (max-width: 1024px) { .main-grid { grid-template-columns:1fr; } .sidebar { display:none; } }
+    @media (max-width: 768px) {
+      .cards-grid { grid-template-columns:repeat(2,1fr); }
+      .hero-img { height:260px; }
+      .page-wrap { padding:16px; }
+      .nav-bar { padding:0 10px; }
+      .top-bar-inner { padding:5px 12px; }
+      .top-sources { display:none; }
+      .masthead { padding:14px 16px 40px; }
+      .search-wrap { right:16px; }
+    }
+    @media (max-width: 480px) {
+      .cards-grid { grid-template-columns:1fr; }
+      .hero-img { height:200px; }
+      .search-wrap { position:static; transform:none; display:block; margin-top:8px; text-align:center; }
+      .masthead { padding-bottom:14px; }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ══════════════════════════════════════════
+   URL DE TON API GOOGLE APPS SCRIPT
+══════════════════════════════════════════ */
+const API_URL = "https://script.google.com/macros/s/AKfycbwBD9BECKQOEq4N-VXER42AKqn9vWBKc5cE59q74PXuG9vwuCLltyYDtPU2vbz62T8B/exec";
+
+/* Mise à jour automatique toutes les 30 minutes */
+const REFRESH_INTERVAL = 30 * 60 * 1000;
+
+const CATEGORIES = [
+  { id:"all",         label:"Toutes"            },
+  { id:"compet",      label:"Compétitions"      },
+  { id:"equipe",      label:"Équipe de France"  },
+  { id:"portrait",    label:"Portraits"         },
+  { id:"patch-notes", label:"📋 Patch Notes"    },
+];
+
+/* ══════════════════════════════════════════
+   PATCH NOTES — RÈGLES PAR CATÉGORIE D'ÂGE
+   Données officielles FFJudo / IJF 2025-2026
+   Éditables via le panneau Admin
+══════════════════════════════════════════ */
+
+const PATCH_NOTES_DEFAULT = [
+  {
+    id: "eveil",
+    label: "Éveil Judo",
+    emoji: "🐣",
+    ages: "4–5 ans",
+    naissance: "2020–2021",
+    color: "#f9a825",
+    intro: "Pas de compétition. Découverte du judo par le jeu, les chutes (ukemi) et la relation avec l'autre. Objectif : plaisir et motricité.",
+    sections: [
+      { title: "Durée", text: "Pas de combat chronométré. Animations et jeux collectifs uniquement." },
+      { title: "Score", text: "Aucun système de score. Aucune notion de victoire/défaite." },
+      { title: "Poids", text: "Pas de catégories de poids. Groupes morphologiques informels selon la taille." },
+      { title: "Techniques", text: "Uniquement chutes (ukemi), déplacements, jeux d'opposition et premiers gestes de projection guidés par l'enseignant." },
+      { title: "🚫 Techniques interdites", text: "TOUTES les techniques de compétition sont interdites : projections libres, immobilisations, clés de bras (kansetsu-waza), étranglements (shime-waza), clés de jambes, makikomi, sutemi-waza. Aucune prise de combat autonome." },
+      { title: "Niveau compét.", text: "❌ Aucune compétition officielle à ce stade." },
+    ]
+  },
+  {
+    id: "poussinets",
+    label: "Poussinets",
+    emoji: "🌱",
+    ages: "6–7 ans",
+    naissance: "2018–2019",
+    color: "#66bb6a",
+    intro: "Initiations ludiques à vocation pédagogique. Pas de vraies compétitions, mais des animations encadrées par catégories morphologiques.",
+    sections: [
+      { title: "Durée", text: "Pas de durée fixe. Format animation / tournoi pédagogique." },
+      { title: "Score", text: "Waza-ari et ippon peuvent être utilisés de façon pédagogique, mais l'esprit est avant tout formatif." },
+      { title: "Poids", text: "Groupes morphologiques (pas de catégories de poids strictes). Répartition par gabarit." },
+      { title: "Techniques", text: "Projections simples (o-soto-gari, de-ashi-barai), chutes avant/arrière/latérales. Pas de clés ni d'étranglements." },
+      { title: "🚫 Techniques interdites", text: "Clés de bras (kansetsu-waza) ❌ — Étranglements (shime-waza) ❌ — Clés de jambes ❌ — Techniques au sol autres que jeux d'immobilisation guidés ❌ — Makikomi ❌ — Sutemi-waza ❌." },
+      { title: "Saisie", text: "Saisie fondamentale 2 mains (col + manche) installée avant chaque hajime." },
+      { title: "Niveau compét.", text: "🏅 Niveau maximum : départemental. Compétitions mixtes autorisées." },
+    ]
+  },
+  {
+    id: "poussins",
+    label: "Poussins",
+    emoji: "⭐",
+    ages: "8–9 ans",
+    naissance: "2016–2017",
+    color: "#26a69a",
+    intro: "Premiers tournois officiels à vocation pédagogique. Accent sur la saisie fondamentale, les projections debout et les immobilisations simples.",
+    sections: [
+      { title: "Durée", text: "1 min 30 sec de combat. Golden Score : 1 minute." },
+      { title: "Score", text: "Waza-ari (10–19 sec d'immobilisation) et Ippon (20 sec ou belle projection). Pas de shido — l'arbitre dit Matte et explique la faute." },
+      { title: "Poids (M)", text: "Groupes morphologiques. Catégories indicatives : -26, -30, -34, -38, -42, -46, -50, -55, -60, -66, +66 kg." },
+      { title: "Poids (F)", text: "Groupes morphologiques. Catégories indicatives : -24, -27, -30, -33, -36, -40, -44, -48, -52, -57, +57 kg." },
+      { title: "Techniques", text: "Projections debout autorisées. Ne-waza (sol) : immobilisations uniquement. Pas de clés de bras, pas d'étranglements." },
+      { title: "🚫 Techniques interdites", text: "Clés de bras (kansetsu-waza) ❌ — Étranglements (shime-waza) ❌ — Clés de jambes ❌ — Main du revers au-dessus de l'épaule ❌ — Makikomi ❌ — Sutemi-waza ❌ — Saisie à une main au départ ❌." },
+      { title: "Saisie", text: "Saisie fondamentale 2 mains obligatoire avant hajime. Interdiction de monter la main du revers au-dessus de l'épaule." },
+      { title: "Pénalités", text: "Pas de shido. Matte + explication pédagogique de l'arbitre. En cas de récidive, arrêt du combat possible." },
+      { title: "Niveau compét.", text: "🏅 Niveau maximum : départemental. Mixte autorisé." },
+    ]
+  },
+  {
+    id: "benjamins",
+    label: "Benjamins",
+    emoji: "🥋",
+    ages: "10–11 ans",
+    naissance: "2014–2015",
+    color: "#5c6bc0",
+    intro: "Premiers championnats régionaux. Règles proches de l'adulte avec adaptations pédagogiques. Saisie fondamentale obligatoire.",
+    sections: [
+      { title: "Durée", text: "2 minutes. Golden Score : 2 minutes." },
+      { title: "Score", text: "Waza-ari et Ippon. Shido autorisé — 3 shido = hansoku-make. L'arbitre explique les fautes." },
+      { title: "Poids (M)", text: "-30, -34, -38, -42, -46, -50, -55, -60, -66, +66 kg." },
+      { title: "Poids (F)", text: "-32, -36, -40, -44, -48, -52, -57, -63, +63 kg." },
+      { title: "Techniques debout", text: "Toutes les projections autorisées. Makikomi et sutemi autorisés si déséquilibre préalable marqué." },
+      { title: "Ne-waza (sol)", text: "Immobilisations autorisées. Clés de bras (kansetsu-waza) interdites. Étranglements interdits." },
+      { title: "🚫 Techniques interdites", text: "Clés de bras (kansetsu-waza) ❌ — Étranglements (shime-waza) ❌ — Clés de jambes ❌ — Main du revers au-dessus du col sans intention offensive ❌ — Attaques à genoux sans déséquilibre préalable ❌ — Saisie à une main au départ ❌." },
+      { title: "Saisie", text: "Saisie fondamentale 2 mains (col + manche) obligatoire. Main du revers ne peut pas monter au-dessus du col sauf intention offensive." },
+      { title: "Accompagnateur", text: "1 accompagnateur par judoka peut demander un temps mort de 15 sec (drapeau rouge/blanc). Pas de temps mort en golden score." },
+      { title: "Niveau compét.", text: "🏅 Niveau maximum : régional." },
+    ]
+  },
+  {
+    id: "minimes",
+    label: "Minimes",
+    emoji: "🎯",
+    ages: "12–13 ans",
+    naissance: "2012–2013",
+    color: "#ef5350",
+    intro: "Catégorie de formation et détection. Premières compétitions nationales. Judo d'attaque valorisé. Saisie fondamentale et position naturelle essentielles.",
+    sections: [
+      { title: "Durée", text: "3 minutes. Golden Score : 3 minutes." },
+      { title: "Score", text: "Waza-ari et Ippon. 3 shido = hansoku-make." },
+      { title: "Poids (M)", text: "-34, -38, -42, -46, -50, -55, -60, -66, -73, +73 kg." },
+      { title: "Poids (F)", text: "-36, -40, -44, -48, -52, -57, -63, -70, +70 kg." },
+      { title: "Techniques debout", text: "Toutes projections autorisées. Makikomi et sutemi autorisés. Attaques à genoux autorisées si déséquilibre préalable." },
+      { title: "Ne-waza (sol)", text: "Immobilisations autorisées. Étranglements autorisés. Clés de bras (kansetsu-waza) interdites." },
+      { title: "🚫 Techniques interdites", text: "Clés de bras (kansetsu-waza) ❌ — Clés de jambes ❌ — Attaques à genoux sans déséquilibre préalable ❌ — Saisie à une main sans intention offensive immédiate ❌ — Position défensive fermée (garde en tortue sans action) sanctionnée par shido ❌." },
+      { title: "Saisie", text: "Position naturelle (shizen-tai) et saisie 2 mains obligatoire. Manche tenue en permanence pendant tout le combat." },
+      { title: "Accompagnateur", text: "1 accompagnateur peut demander temps mort de 15 sec. Pas de temps mort en golden score." },
+      { title: "Niveau compét.", text: "🏆 Niveau maximum : national (Championnat de France)." },
+    ]
+  },
+  {
+    id: "cadets",
+    label: "Cadets",
+    emoji: "⚡",
+    ages: "14–15–16 ans",
+    naissance: "2009–2010–2011",
+    color: "#8d6e63",
+    intro: "Passage vers le judo adulte. Règles proches des seniors. Premières compétitions internationales possibles. Deux niveaux : divisions 1, 2 et 3.",
+    sections: [
+      { title: "Durée", text: "3 min (2e et 3e division). 4 min (1re division). Golden Score : illimité." },
+      { title: "Score", text: "Waza-ari et Ippon. 3 shido = hansoku-make. Hansoku-make direct possible pour faute grave." },
+      { title: "Poids (M)", text: "-46, -50, -55, -60, -66, -73, -81, -90, +90 kg." },
+      { title: "Poids (F)", text: "-40, -44, -48, -52, -57, -63, -70, +70 kg." },
+      { title: "Techniques", text: "Toutes techniques autorisées : projections, immobilisations, étranglements, clés de bras." },
+      { title: "Ne-waza (sol)", text: "Règles adultes complètes. Kansetsu-waza (clés de bras) autorisées." },
+      { title: "🚫 Techniques interdites", text: "Clés de jambes ❌ — Clé de nuque / neck crank ❌ — Projection avec saisie des deux jambes simultanément (morote-gari interdit depuis 2010 IJF) ❌ — Kani-basami (ciseau de jambes en saut) ❌ — Attaque directe sur la tête/cou debout ❌." },
+      { title: "Récupération", text: "6 minutes minimum entre deux combats." },
+      { title: "Niveau compét.", text: "🌍 Championnat de France + compétitions internationales (EJU, IJF) autorisées." },
+    ]
+  },
+  {
+    id: "juniors",
+    label: "Juniors",
+    emoji: "🌟",
+    ages: "17–18–19 ans",
+    naissance: "2006–2007–2008",
+    color: "#e64a19",
+    intro: "Règles adultes intégrales. Compétitions internationales IJF. Tremplin vers la catégorie senior. Les U18 et U21 ont leurs propres circuits IJF.",
+    sections: [
+      { title: "Durée", text: "4 minutes. Golden Score : illimité." },
+      { title: "Score", text: "Waza-ari et Ippon. 3 shido = hansoku-make. Règles IJF complètes." },
+      { title: "Poids (M)", text: "-55, -60, -66, -73, -81, -90, -100, +100 kg." },
+      { title: "Poids (F)", text: "-44, -48, -52, -57, -63, -70, -78, +78 kg." },
+      { title: "Techniques", text: "Toutes techniques IJF : projections, ne-waza complet, étranglements, clés de bras." },
+      { title: "🚫 Techniques interdites", text: "Clés de jambes ❌ — Kani-basami (ciseau de jambes en saut) ❌ — Morote-gari (double saisie de jambes) ❌ — Kata-guruma avec saisie entre les jambes ❌ — Attaque directe jambes debout ❌ — Clé de nuque ❌. Règles IJF 2024 en vigueur." },
+      { title: "Shido", text: "3 shido = hansoku-make. Le 3e shido est systématique sans nuance depuis 2024." },
+      { title: "Arbitrage", text: "Arbitrage avec vidéo-assistance (hantei) disponible selon le niveau de la compétition." },
+      { title: "Niveau compét.", text: "🌍 Championnats du Monde Juniors, Grands Prix IJF, Championnats d'Europe." },
+    ]
+  },
+  {
+    id: "seniors",
+    label: "Séniors",
+    emoji: "🏆",
+    ages: "20 ans et +",
+    naissance: "2005 et avant",
+    color: "#c8102e",
+    intro: "Règlement IJF complet. Catégorie reine du judo de compétition. Circuit World Ranking avec Grand Slams, Grand Prix, Mondiaux et Jeux Olympiques.",
+    sections: [
+      { title: "Durée", text: "4 minutes. Golden Score : illimité. 1re expiration : le 1er score ou la 3e shido adverse met fin au combat." },
+      { title: "Score", text: "Waza-ari (10–19 sec osae-komi) et Ippon (20 sec ou projection nette). 2 waza-ari = ippon." },
+      { title: "Poids (M)", text: "-60, -66, -73, -81, -90, -100, +100 kg." },
+      { title: "Poids (F)", text: "-48, -52, -57, -63, -70, -78, +78 kg." },
+      { title: "Shido", text: "3 shido = hansoku-make direct. Shido immédiat pour sortie délibérée du tapis. Passivité sanctionnée dès ~15 sec visibles." },
+      { title: "Ne-waza", text: "Transition debout→sol immédiate et continue. Étranglements + clés de bras autorisés. Clés de jambes interdites." },
+      { title: "🚫 Techniques interdites", text: "Clés de jambes (ashi-kansetsu) ❌ — Kani-basami (ciseau de jambes en saut) ❌ — Morote-gari (saisie double jambe directe) ❌ — Kata-guruma avec saisie entre les jambes ❌ — Attaque directe sur les jambes debout ❌ — Clé de nuque / cervicale ❌ — Doigt dans la manche de façon défensive ❌. Règlement IJF 2024 applicable." },
+      { title: "Golden Score", text: "Shido remis à zéro en GS. Scores du temps réglementaire conservés. Arbitres ne peuvent pas trancher — GS obligatoire." },
+      { title: "Arbitrage", text: "1 arbitre central + 2 juges de coin. Vidéo-assistance (hantei) par la table de contrôle uniquement. Pas de demande de révision par les équipes." },
+      { title: "World Ranking", text: "Fenêtre 2 ans glissants. Grand Slam ×1000, Grand Prix ×700, Mondiaux ×2000, JO ×2500, Continentaux ×900." },
+      { title: "Niveau compét.", text: "🌍 Circuit IJF complet : Grand Slams, Grand Prix, Mondiaux, Jeux Olympiques." },
+    ]
+  },
+  {
+    id: "veterans",
+    label: "Vétérans",
+    emoji: "🎖",
+    ages: "30 ans et +",
+    naissance: "1995 et avant",
+    color: "#607d8b",
+    intro: "Pratique compétitive adaptée aux masters. Organisée par tranches d'âge de 5 ans (M1/F1 à M11/F11). Toutes ceintures confondues.",
+    sections: [
+      { title: "Tranches d'âge", text: "M1/F1 (30–34 ans), M2/F2 (35–39), M3/F3 (40–44), M4/F4 (45–49), M5/F5 (50–54), M6/F6 (55–59), M7/F7 (60–64), M8/F8 (65–69), M9+ au-delà." },
+      { title: "Durée", text: "Variable selon les compétitions. Généralement 3–4 minutes. Golden Score possible." },
+      { title: "Poids", text: "Catégories de poids similaires aux seniors, avec parfois regroupements selon le nombre d'engagés." },
+      { title: "Techniques", text: "Règles généralement identiques aux seniors. Certains comités adaptent les règles pour réduire les risques (pas d'étranglements en M5+, selon les tournois)." },
+      { title: "🚫 Techniques interdites (générales)", text: "Clés de jambes ❌ — Kani-basami ❌ — Morote-gari ❌ — Attaque directe jambes debout ❌. Restrictions supplémentaires selon tranche d'âge : étranglements souvent interdits dès M5/F5 (50 ans+) ❌ — Clés de bras parfois interdites dès M7/F7 (60 ans+) selon règlement local ❌ — Sutemi-waza avec risque de chute arrière parfois limités ❌." },
+      { title: "Esprit", text: "Valorisation du judo technique. Résultats moins importants que la pratique, la convivialité et la progression personnelle." },
+      { title: "Niveau compét.", text: "🌍 Championnats du Monde Masters (IJF), Championnats d'Europe Masters, compétitions nationales FFJudo." },
+    ]
+  },
+];
+
+const PN_STORAGE_KEY = "judoactu_patchnotes_v2";
+
+function loadPatchNotes() {
+  try {
+    const raw = localStorage.getItem(PN_STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return PATCH_NOTES_DEFAULT;
+}
+
+function savePatchNotes(data) {
+  try { localStorage.setItem(PN_STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+/* Pool de 12 photos de judo — attribuées selon le titre
+   pour que chaque article garde toujours la même image */
+const JUDO_POOL = [
+  // Combats / ippon
+  "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=900&q=80",
+  "https://images.unsplash.com/photo-1564415315949-7be64a2a08fb?w=900&q=80",
+  "https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=900&q=80",
+  "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=900&q=80",
+  // Entraînement / dojo
+  "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&q=80",
+  "https://images.unsplash.com/photo-1598971861713-54ad16a7e72e?w=900&q=80",
+  "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=900&q=80",
+  // Ceintures / kimono
+  "https://images.unsplash.com/photo-1547153760-18fc86324498?w=900&q=80",
+  "https://images.unsplash.com/photo-1604652716085-a77697b4ca70?w=900&q=80",
+  // Compétition / podium
+  "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=80",
+  "https://images.unsplash.com/photo-1567157577867-05ccb1388e66?w=900&q=80",
+  "https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=900&q=80",
+];
+/* Hash stable : même titre → toujours même photo */
+function hashImg(str) {
+  let h = 0;
+  for (let i = 0; i < (str||"").length; i++) h = (h * 31 + str.charCodeAt(i)) & 0xffff;
+  return JUDO_POOL[h % JUDO_POOL.length];
+}
+const DEFAULT_IMG = JUDO_POOL[0];
+
+/* Articles de secours si l'API ne répond pas */
+const FALLBACK_ARTICLES = [
+  { id:"f1", featured:"TRUE",  source:"judoinside", sourceName:"JudoInside", color:"#e63946", short:"JIN", cat:"compet", kicker:"JudoInside",    date:"25 janv. 2025", title:"Teddy Riner : la 12ᵉ couronne mondiale, l'impossible légende",          img:"https://images.unsplash.com/photo-1555597673-b21d5c935865?w=1200&q=85", link:"https://judoinside.com", body:"Quelques secondes ont suffi. Un seoi-nage parfait, une chute irrévocable. Teddy Riner vient d'inscrire son nom une douzième fois au palmarès mondial à 35 ans." },
+  { id:"f2", featured:"FALSE", source:"eju",        sourceName:"EJU",        color:"#2d6a4f", short:"EJU", cat:"compet", kicker:"EJU",           date:"24 janv. 2025", title:"Grand Slam Paris 2025 : les engagements confirmés",                       img:"https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=900&q=80",  link:"https://www.eju.net",    body:"L'Union Européenne de Judo a publié la liste des engagements pour le Grand Slam de Paris. Soixante nations représentées." },
+  { id:"f3", featured:"FALSE", source:"ffjudo",     sourceName:"FF Judo",    color:"#003189", short:"FFJ", cat:"equipe", kicker:"France Judo",   date:"24 janv. 2025", title:"Agbégnénou de retour : «Je veux prouver que je suis encore là»",          img:"https://images.unsplash.com/photo-1540479859555-17af45c78602?w=900&q=80",  link:"https://www.ffjudo.com", body:"Clarisse Agbégnénou a confirmé sa participation au Grand Prix de Paris prévu en février." },
+  { id:"f4", featured:"FALSE", source:"judoinside", sourceName:"JudoInside", color:"#e63946", short:"JIN", cat:"compet", kicker:"JudoInside",    date:"23 janv. 2025", title:"Tokyo Grand Slam : programme et têtes de série à surveiller",             img:"https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=900&q=80",  link:"https://judoinside.com", body:"Le Grand Slam de Tokyo ouvre ses portes. Seize catégories, quatre-vingt nations représentées." },
+  { id:"f5", featured:"FALSE", source:"eju",        sourceName:"EJU",        color:"#2d6a4f", short:"EJU", cat:"resultat",kicker:"EJU",          date:"22 janv. 2025", title:"Mondiaux juniors : la France repart avec trois médailles",                 img:"https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=80",  link:"https://www.eju.net",    body:"Un or, un argent, un bronze. Le bilan est flatteur pour la délégation française." },
+  { id:"f6", featured:"FALSE", source:"ffjudo",     sourceName:"FF Judo",    color:"#003189", short:"FFJ", cat:"portrait",kicker:"France Judo",  date:"21 janv. 2025", title:"Luka Mkheidze : «Chaque Grand Slam, je joue ma carrière»",               img:"https://images.unsplash.com/photo-1564415315949-7be64a2a08fb?w=900&q=80",  link:"https://www.ffjudo.com", body:"Naturalisé français en 2019, champion olympique à Tokyo, Luka Mkheidze vit le judo avec une intensité rare." },
+];
+
+/* ══════════════════════════════════════════
+   FETCH DEPUIS GOOGLE APPS SCRIPT
+══════════════════════════════════════════ */
+async function fetchFromGoogle() {
+  const res  = await fetch(API_URL);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  if (!data.articles || data.articles.length === 0) throw new Error("Aucun article");
+  return data.articles;
+}
+
+/* ══════════════════════════════════════════
+   TRADUCTION AUTO EN FRANÇAIS VIA CLAUDE
+   — 1 seul appel batch pour tous les articles non-FR
+══════════════════════════════════════════ */
+
+// Sources déjà en français — pas besoin de traduire
+const FR_SOURCES = ["ffjudo", "lequipe", "eurosport", "judoside"];
+
+function needsTranslation(article) {
+  return !FR_SOURCES.includes(article.source);
+}
+
+async function translateArticles(articles) {
+  const toTranslate = articles.filter(needsTranslation);
+  if (toTranslate.length === 0) return articles;
+
+  // Prépare le batch : id + title + body
+  const batch = toTranslate.map(a => ({ id: a.id, title: a.title, body: a.body }));
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{
+          role: "user",
+          content: `Tu es un traducteur spécialisé en sport de combat. Traduis en français naturel et fluide les titres et résumés suivants (judo). Réponds UNIQUEMENT en JSON valide, sans backticks ni texte autour, avec exactement ce format :
+[{"id":"...","title":"...","body":"..."}]
+
+Articles à traduire :
+${JSON.stringify(batch)}`
+        }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.map(b => b.text || "").join("") || "";
+    const translated = JSON.parse(text);
+
+    // Fusionne les traductions dans les articles originaux
+    const map = {};
+    translated.forEach(t => { map[t.id] = t; });
+
+    return articles.map(a => {
+      if (map[a.id]) return { ...a, title: map[a.id].title, body: map[a.id].body };
+      return a;
+    });
+  } catch (err) {
+    console.warn("Traduction échouée, articles en langue originale :", err.message);
+    return articles; // fallback silencieux
+  }
+}
+
+/* ── Micro composants ── */
+function Badge({ sourceId, color, short }) {
+  const c = color || "#888";
+  const s = short || sourceId;
+  return <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.62rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:c, background:c+"15", border:`1px solid ${c}40`, padding:"1px 6px", borderRadius:2 }}>{s}</span>;
+}
+
+function Kicker({ text }) {
+  return <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.18em", textTransform:"uppercase", color:"var(--accent)", marginBottom:5 }}>{text}</div>;
+}
+
+function Dateline({ article }) {
+  return (
+    <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", color:"var(--muted)", letterSpacing:"0.06em", display:"flex", gap:8, alignItems:"center", marginTop:8 }}>
+      <span>{article.date}</span>
+      <span style={{color:"var(--rule)"}}>·</span>
+      <Badge sourceId={article.source} color={article.color} short={article.short} />
+    </div>
+  );
+}
+
+function getImg(article) {
+  return article.img || null;
+}
+
+function Spinner({ translating }) {
+  return (
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"6rem 2rem", gap:20 }}>
+      <div style={{ width:36, height:36, border:"3px solid var(--rule)", borderTopColor:"var(--accent)", borderRadius:"50%", animation:"spin 0.8s linear infinite" }} />
+      <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)" }}>
+        {translating ? "Traduction des articles…" : "Chargement des articles…"}
+      </div>
+    </div>
+  );
+}
+
+function FallbackBanner() {
+  return (
+    <div style={{ background:"#fff8e1", border:"1px solid #ffe082", borderRadius:3, padding:"10px 16px", marginBottom:20, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.7rem", letterSpacing:"0.08em", color:"#7a6000", display:"flex", alignItems:"center", gap:10 }}>
+      <span>⚠️</span>
+      <span>Connexion à l'API indisponible — affichage des derniers articles enregistrés.</span>
+    </div>
+  );
+}
+
+function RefreshBanner({ lastUpdated, onRefresh, refreshing }) {
+  return (
+    <div style={{ background:"var(--cream)", border:"1px solid var(--rule)", borderRadius:3, padding:"8px 16px", marginBottom:20, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", letterSpacing:"0.08em", color:"var(--muted)", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+      <span>Mis à jour à {lastUpdated} · Actualisation automatique toutes les 30 min</span>
+      <button onClick={onRefresh} disabled={refreshing} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color: refreshing ? "var(--rule)" : "var(--accent)", cursor: refreshing ? "default" : "pointer", padding:"4px 10px", border:"1px solid currentColor", borderRadius:2, background:"none" }}>
+        {refreshing ? "↻ Actualisation…" : "↻ Actualiser"}
+      </button>
+    </div>
+  );
+}
+
+/* ── Cartes articles ── */
+function Hero({ article, onClick }) {
+  const img = getImg(article);
+  return (
+    <div onClick={()=>onClick(article)} className="fade-up" style={{ cursor:"pointer", borderTop:"3px solid var(--ink)" }}>
+      {img && <div className="img-wrap hero-img" style={{ marginBottom:18 }}>
+        <img src={img} alt={article.title} />
+      </div>}
+      <Kicker text={article.kicker || article.sourceName} />
+      <h2 style={{ fontFamily:"'Playfair Display',Georgia,serif", fontSize:"clamp(1.5rem,4vw,2.6rem)", fontWeight:900, lineHeight:1.12, letterSpacing:"-0.01em", marginBottom:12, maxWidth:720 }}>{article.title}</h2>
+      <p style={{ fontFamily:"'Source Serif 4',Georgia,serif", fontSize:"1rem", lineHeight:1.65, color:"#333", maxWidth:660, fontStyle:"italic" }}>{(article.body||"").slice(0,200)}…</p>
+      <Dateline article={article} />
+      {article.link && (
+        <a href={article.link} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
+          style={{ display:"inline-block", marginTop:10, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--accent)", borderBottom:"1px solid var(--accent)" }}>
+          Lire l'article original ↗
+        </a>
+      )}
+      <div style={{ borderBottom:"1px solid var(--rule)", paddingBottom:20, marginTop:12 }} />
+    </div>
+  );
+}
+
+function Card({ article, index, onClick }) {
+  const img = getImg(article);
+  return (
+    <div onClick={()=>onClick(article)} className="card fade-up" style={{ cursor:"pointer", borderTop:"1px solid var(--rule)", paddingTop:14, paddingBottom:14, animationDelay:`${index*0.05}s`, display:"flex", flexDirection:"column" }}>
+      {img && <div className="img-wrap card-img" style={{ marginBottom:10, borderRadius:1 }}>
+        <img src={img} alt={article.title} />
+      </div>}
+      <Kicker text={article.kicker || article.sourceName} />
+      <h3 style={{ fontFamily:"'Playfair Display',Georgia,serif", fontSize:"1rem", fontWeight:700, lineHeight:1.28, letterSpacing:"-0.005em", marginBottom:5 }}>{article.title}</h3>
+      <p style={{ fontSize:"0.8rem", color:"var(--muted)", lineHeight:1.5, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>{(article.body||"").slice(0,110)}…</p>
+      <Dateline article={article} />
+    </div>
+  );
+}
+
+function Modal({ article, onClose }) {
+  const img = getImg(article);
+  useEffect(() => {
+    const h = e => { if (e.key==="Escape") onClose(); };
+    window.addEventListener("keydown", h);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", h); document.body.style.overflow = ""; };
+  }, []);
+  return (
+    <div style={{ position:"fixed", inset:0, background:"rgba(17,16,16,0.6)", backdropFilter:"blur(4px)", zIndex:1000, display:"flex", alignItems:"flex-start", justifyContent:"center", padding:"2rem 1rem", overflowY:"auto" }}
+      onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+      <div className="fade-up" style={{ background:"var(--paper)", maxWidth:700, width:"100%", borderTop:"4px solid var(--accent)", position:"relative", paddingBottom:"3rem" }}>
+        {img
+          ? <div style={{ width:"100%", height:300, overflow:"hidden", position:"relative" }}>
+              <img src={img} alt={article.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+              <button onClick={onClose} style={{ position:"absolute", top:12, right:12, fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--white)", padding:"5px 12px", border:"1px solid rgba(255,255,255,0.6)", borderRadius:2, background:"rgba(0,0,0,0.45)", cursor:"pointer" }}>✕ Fermer</button>
+            </div>
+          : <div style={{ display:"flex", justifyContent:"flex-end", padding:"12px 14px 0" }}>
+              <button onClick={onClose} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--muted)", padding:"5px 12px", border:"1px solid var(--rule)", borderRadius:2, background:"none", cursor:"pointer" }}>✕ Fermer</button>
+            </div>
+        }
+        <div style={{ padding:"1.6rem 1.8rem 0" }}>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:article.color||"var(--muted)", marginBottom:10 }}>{article.sourceName}</div>
+          <Kicker text={article.kicker || article.sourceName} />
+          <h1 style={{ fontFamily:"'Playfair Display',Georgia,serif", fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:900, lineHeight:1.15, letterSpacing:"-0.01em", marginBottom:16 }}>{article.title}</h1>
+          <div style={{ borderTop:"3px solid var(--ink)", marginBottom:14 }} />
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", color:"var(--muted)", letterSpacing:"0.06em", marginBottom:20 }}>{article.date}</div>
+          <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"1rem", fontStyle:"italic", lineHeight:1.7, color:"#2a2828", borderLeft:"3px solid var(--accent)", paddingLeft:16, marginBottom:24 }}>{article.body}</p>
+          {article.link && (
+            <a href={article.link} target="_blank" rel="noopener noreferrer" style={{ display:"inline-block", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", padding:"10px 20px", background:"var(--accent)", color:"var(--white)", borderRadius:2, marginBottom:24 }}>
+              Lire l'article complet ↗
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   PAGE PATCH NOTES — PAR CATÉGORIE D'ÂGE
+══════════════════════════════════════════ */
+
+function AdminPNModal({ patchList, onSave, onClose }) {
+  const [draft, setDraft] = useState(JSON.stringify(patchList, null, 2));
+  const [error, setError] = useState("");
+  useEffect(() => {
+    const h = e => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", h);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", h); document.body.style.overflow = ""; };
+  }, []);
+  const handleSave = () => {
+    try { onSave(JSON.parse(draft)); onClose(); }
+    catch(e) { setError("JSON invalide : " + e.message); }
+  };
+  return (
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", backdropFilter:"blur(3px)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center", padding:"1.5rem" }}
+      onClick={e => { if(e.target===e.currentTarget) onClose(); }}>
+      <div className="fade-up" style={{ background:"var(--paper)", width:"100%", maxWidth:800, maxHeight:"88vh", display:"flex", flexDirection:"column", borderTop:"4px solid var(--accent)" }}>
+        <div style={{ padding:"16px 20px", borderBottom:"1px solid var(--rule)", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+          <div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--accent)" }}>ADMIN · PATCH NOTES</div>
+            <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.05rem", fontWeight:700 }}>Modifier les règles par catégorie d'âge</div>
+          </div>
+          <button onClick={onClose} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--muted)", padding:"5px 12px", border:"1px solid var(--rule)", borderRadius:2, cursor:"pointer" }}>✕ Fermer</button>
+        </div>
+        <div style={{ padding:"10px 20px", background:"var(--cream)", borderBottom:"1px solid var(--rule)", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", letterSpacing:"0.06em", color:"var(--muted)" }}>
+          Chaque objet = 1 catégorie d'âge. Champs : <strong>id, label, emoji, ages, naissance, color, intro, sections[]</strong> (title + text). Sauvegardé dans le navigateur.
+        </div>
+        <textarea value={draft} onChange={e => { setDraft(e.target.value); setError(""); }}
+          style={{ flex:1, padding:"14px 18px", fontFamily:"'Courier New',monospace", fontSize:"0.75rem", lineHeight:1.55, border:"none", outline:"none", resize:"none", background:"#181818", color:"#e8e8e8", overflowY:"auto" }} />
+        {error && <div style={{ padding:"8px 20px", background:"#fce4ec", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", color:"#c8102e" }}>⚠ {error}</div>}
+        <div style={{ padding:"12px 20px", borderTop:"1px solid var(--rule)", display:"flex", justifyContent:"space-between", gap:12 }}>
+          <button onClick={() => { setDraft(JSON.stringify(PATCH_NOTES_DEFAULT, null, 2)); setError(""); }}
+            style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--muted)", padding:"6px 14px", border:"1px solid var(--rule)", borderRadius:2, cursor:"pointer" }}>
+            ↺ Réinitialiser
+          </button>
+          <button onClick={handleSave}
+            style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"#fff", background:"var(--accent)", padding:"8px 20px", border:"none", borderRadius:2, cursor:"pointer" }}>
+            ✓ Sauvegarder
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PatchNotesPage({ patchList, onUpdate }) {
+  const [activeId, setActiveId]   = useState(patchList[0]?.id || null);
+  const [showAdmin, setShowAdmin] = useState(false);
+  const cat = patchList.find(p => p.id === activeId) || patchList[0];
+
+  return (
+    <>
+      <div style={{ marginBottom:8 }}>
+        {/* Bandeau titre */}
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 0 10px", borderBottom:"3px solid var(--ink)", marginBottom:16 }}>
+          <div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--accent)", marginBottom:3 }}>PATCH NOTES · SAISON 2025-2026</div>
+            <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:900, lineHeight:1.1 }}>Règles officielles par catégorie d'âge</h2>
+            <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.82rem", fontStyle:"italic", color:"var(--muted)", marginTop:4 }}>Données FFJudo / IJF — mises à jour saison 2025-2026</p>
+          </div>
+          <button onClick={() => setShowAdmin(true)}
+            style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.62rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--muted)", padding:"6px 12px", border:"1px solid var(--rule)", borderRadius:2, background:"none", cursor:"pointer", flexShrink:0 }}>
+            ✎ Modifier
+          </button>
+        </div>
+
+        {/* Pills catégories */}
+        <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:24 }}>
+          {patchList.map(p => (
+            <button key={p.id} onClick={() => setActiveId(p.id)}
+              style={{
+                fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.08em",
+                padding:"7px 14px", borderRadius:20, cursor:"pointer", transition:"all 0.15s",
+                background: activeId===p.id ? p.color : "transparent",
+                color: activeId===p.id ? "#fff" : "var(--muted)",
+                border: activeId===p.id ? `2px solid ${p.color}` : "2px solid var(--rule)",
+              }}>
+              {p.emoji} {p.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Fiche de la catégorie active */}
+        {cat && (
+          <div key={cat.id} className="fade-up">
+            {/* En-tête catégorie */}
+            <div style={{ display:"flex", alignItems:"flex-start", gap:16, padding:"18px 20px", background:"var(--ink)", color:"var(--paper)", marginBottom:2 }}>
+              <div style={{ fontSize:"2.2rem", lineHeight:1 }}>{cat.emoji}</div>
+              <div style={{ flex:1 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:5 }}>
+                  <span style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.4rem", fontWeight:900 }}>{cat.label}</span>
+                  <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.1em", padding:"3px 10px", borderRadius:2, background:cat.color, color:"#fff" }}>{cat.ages}</span>
+                  <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.62rem", color:"#aaa", letterSpacing:"0.06em" }}>Nés en {cat.naissance}</span>
+                </div>
+                <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.85rem", fontStyle:"italic", color:"#ccc", lineHeight:1.55 }}>{cat.intro}</p>
+              </div>
+            </div>
+
+            {/* Grille des règles */}
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(280px, 1fr))", gap:1, background:"var(--rule)" }}>
+              {cat.sections.map((sec, i) => (
+                <div key={i} style={{ background:"var(--paper)", padding:"14px 18px" }}>
+                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.18em", textTransform:"uppercase", color:cat.color, marginBottom:5, borderBottom:`1px solid ${cat.color}30`, paddingBottom:4 }}>
+                    {sec.title}
+                  </div>
+                  <p style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.84rem", lineHeight:1.6, color:"#2a2828" }}>{sec.text}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer */}
+            <div style={{ padding:"8px 0", display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:4 }}>
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.55rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--rule)" }}>
+                Source : FFJudo / IJF · Règlement officiel saison 2025-2026 · Données pré-remplies par IA
+              </span>
+              <a href="https://www.ffjudo.com" target="_blank" rel="noopener noreferrer"
+                style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--accent)" }}>
+                ffjudo.com ↗
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {showAdmin && (
+        <AdminPNModal
+          patchList={patchList}
+          onSave={data => { onUpdate(data); savePatchNotes(data); }}
+          onClose={() => setShowAdmin(false)}
+        />
+      )}
+    </>
+  );
+}
+
+/* ── Header ── */
+function Header({ activeCategory, setActiveCategory, searchQuery, setSearchQuery, sources }) {
+  const today = new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  return (
+    <header style={{ background:"var(--paper)", borderBottom:"1px solid var(--rule)", position:"sticky", top:0, zIndex:200 }}>
+      <div className="top-bar-inner">
+        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", letterSpacing:"0.15em", textTransform:"uppercase", opacity:0.6 }}>{today}</span>
+        <div className="top-sources">
+          {sources.map(s=><span key={s} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", letterSpacing:"0.12em", textTransform:"uppercase", opacity:0.5 }}>{s}</span>)}
+        </div>
+      </div>
+      <div className="masthead">
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:12 }}>
+          <svg width="44" height="44" viewBox="0 0 44 44" style={{flexShrink:0}}>
+            <circle cx="22" cy="22" r="22" fill="#c8102e"/>
+            <text x="22" y="30" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="900" fontSize="22" letterSpacing="-1" fill="white">JA</text>
+          </svg>
+          <div style={{ fontFamily:"'Playfair Display',Georgia,serif", fontSize:"clamp(2rem,6vw,3.8rem)", fontWeight:900, letterSpacing:"0.06em", lineHeight:1, textTransform:"uppercase" }}>
+            Judo<span style={{color:"var(--accent)"}}>Actu</span>
+          </div>
+        </div>
+        <div style={{ fontFamily:"'Source Serif 4',serif", fontStyle:"italic", fontSize:"0.78rem", color:"var(--muted)", marginTop:4 }}>L'actualité du judo français et international</div>
+        <div className="search-wrap">
+          <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder="Rechercher…"
+            style={{ fontFamily:"'Source Serif 4',serif", fontSize:"0.78rem", fontStyle:"italic", background:"transparent", border:"none", borderBottom:"1px solid var(--rule)", padding:"4px 2px", color:"var(--ink)", width:160, outline:"none" }} />
+        </div>
+      </div>
+      <nav className="nav-bar">
+        {CATEGORIES.map(cat=>(
+          <button key={cat.id} onClick={()=>setActiveCategory(cat.id)} style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.68rem", fontWeight:activeCategory===cat.id?700:600, letterSpacing:"0.12em", textTransform:"uppercase", color:activeCategory===cat.id?"var(--accent)":"var(--muted)", padding:"10px 14px", borderBottom:activeCategory===cat.id?"2px solid var(--accent)":"2px solid transparent", transition:"color 0.15s", whiteSpace:"nowrap", background:"none", border:"none", cursor:"pointer" }}>{cat.label}</button>
+        ))}
+      </nav>
+    </header>
+  );
+}
+
+/* ── Sidebar ── */
+function Sidebar({ activeSource, setActiveSource, sourceList, count }) {
+  return (
+    <aside className="sidebar">
+      <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)", marginBottom:12, paddingBottom:8, borderBottom:"2px solid var(--ink)" }}>Sources</div>
+      {[{id:"all",name:"Toutes les sources",color:"var(--ink)"},...sourceList].map(src=>(
+        <button key={src.id} onClick={()=>setActiveSource(src.id)} style={{ display:"block", width:"100%", textAlign:"left", fontFamily:"'Source Serif 4',serif", fontSize:"0.78rem", color:activeSource===src.id?(src.color||"var(--accent)"):"var(--muted)", fontWeight:activeSource===src.id?600:400, padding:"5px 0", borderBottom:"1px solid var(--cream)", transition:"color 0.15s", background:"none", border:"none", cursor:"pointer" }}>
+          {activeSource===src.id&&<span style={{color:"var(--accent)",marginRight:4,fontSize:"0.6rem"}}>▶</span>}{src.name}
+        </button>
+      ))}
+      <div style={{ marginTop:24, paddingTop:16, borderTop:"2px solid var(--ink)" }}>
+        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)", marginBottom:12 }}>En chiffres</div>
+        {[{n:count,label:"articles"},{n:sourceList.length,label:"sources"},{n:CATEGORIES.length-1,label:"rubriques"}].map(({n,label})=>(
+          <div key={label} style={{marginBottom:10}}>
+            <div style={{fontFamily:"'Playfair Display',serif",fontSize:"1.5rem",fontWeight:900,color:"var(--accent)",lineHeight:1}}>{n}</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"0.62rem",letterSpacing:"0.1em",textTransform:"uppercase",color:"var(--muted)"}}>{label}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginTop:24, background:"var(--cream)", border:"1px dashed var(--rule)", padding:"30px 10px", textAlign:"center", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.55rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--rule)" }}>AdSense<br/>300×250</div>
+    </aside>
+  );
+}
+
+const AD = <div style={{ background:"var(--cream)", border:"1px dashed var(--rule)", padding:"10px 0", textAlign:"center", fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.58rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--rule)", margin:"20px 0" }}>Espace publicitaire 728×90 — Google AdSense</div>;
+
+/* ══ APP ══ */
+function App() {
+  const [articles,       setArticles]       = useState([]);
+  const [loading,        setLoading]        = useState(true);
+  const [translating,    setTranslating]    = useState(false);
+  const [refreshing,     setRefreshing]     = useState(false);
+  const [isFallback,     setIsFallback]     = useState(false);
+  const [lastUpdated,    setLastUpdated]    = useState(null);
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeSource,   setActiveSource]   = useState("all");
+  const [searchQuery,    setSearchQuery]    = useState("");
+  const [openArticle,    setOpenArticle]    = useState(null);
+  const [patchList,      setPatchList]      = useState(() => loadPatchNotes());
+  const timerRef = useRef(null);
+
+  const load = async (silent=false) => {
+    if (!silent) setLoading(true);
+    else setRefreshing(true);
+    try {
+      const raw  = await fetchFromGoogle();
+      setTranslating(true);
+      const data = await translateArticles(raw);
+      setTranslating(false);
+      setArticles(data);
+      setIsFallback(false);
+      setLastUpdated(new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}));
+    } catch(e) {
+      console.warn("API indisponible, fallback :", e.message);
+      if (!silent) { setArticles(FALLBACK_ARTICLES); setIsFallback(true); }
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+    timerRef.current = setInterval(() => load(true), REFRESH_INTERVAL);
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  /* Sources uniques extraites des articles */
+  const sourceList = [...new Map(articles.map(a=>[a.source,{id:a.source,name:a.sourceName||a.source,color:a.color}])).values()];
+  const sourceNames = sourceList.map(s=>s.name);
+
+  const filtered = articles.filter(a => {
+    const matchCat = activeCategory==="all" || a.cat===activeCategory;
+    const matchSrc = activeSource==="all"   || a.source===activeSource;
+    const q = searchQuery.toLowerCase();
+    return matchCat && matchSrc && (!q || (a.title||"").toLowerCase().includes(q) || (a.body||"").toLowerCase().includes(q));
+  });
+
+  const hero      = filtered.find(a=>a.featured==="TRUE"||a.featured===true) || filtered[0];
+  const secondary = filtered.filter(a=>a!==hero);
+
+  return (
+    <>
+      <Header activeCategory={activeCategory} setActiveCategory={setActiveCategory} searchQuery={searchQuery} setSearchQuery={setSearchQuery} sources={sourceNames} />
+
+      <div className="page-wrap">
+        {activeCategory === "patch-notes" ? (
+          <PatchNotesPage patchList={patchList} onUpdate={data => { setPatchList(data); savePatchNotes(data); }} />
+        ) : (
+          <>
+            {AD}
+            {isFallback && !loading && <FallbackBanner />}
+            {lastUpdated && !isFallback && <RefreshBanner lastUpdated={lastUpdated} onRefresh={()=>load(true)} refreshing={refreshing} />}
+
+            <div className="main-grid">
+              <div>
+                {loading ? <Spinner translating={translating} /> : filtered.length===0 ? (
+                  <div style={{ textAlign:"center", padding:"4rem 0", fontFamily:"'Playfair Display',serif", fontStyle:"italic", color:"var(--muted)", fontSize:"1.1rem" }}>Aucun article ne correspond à votre sélection.</div>
+                ) : <>
+                  {hero && <Hero article={hero} onClick={setOpenArticle} />}
+                  {secondary.length>0 && <div className="cards-grid">{secondary.slice(0,6).map((a,i)=><Card key={a.id} article={a} index={i} onClick={setOpenArticle}/>)}</div>}
+                  {AD}
+                  {secondary.length>6 && <div className="cards-grid">{secondary.slice(6).map((a,i)=><Card key={a.id} article={a} index={i+6} onClick={setOpenArticle}/>)}</div>}
+                </>}
+              </div>
+              <Sidebar activeSource={activeSource} setActiveSource={setActiveSource} sourceList={sourceList} count={articles.length} />
+            </div>
+          </>
+        )}
+
+        <footer style={{ marginTop:48, paddingTop:20, borderTop:"3px double var(--ink)", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12 }}>
+          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.1rem", fontWeight:900, letterSpacing:"0.06em", textTransform:"uppercase" }}>Judo<span style={{color:"var(--accent)"}}>Actu</span></div>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"0.62rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--muted)", display:"flex", gap:20, flexWrap:"wrap" }}>
+            {["À propos","Mentions légales","Politique de confidentialité","Contact"].map(l=><span key={l} style={{cursor:"pointer"}}>{l}</span>)}
+          </div>
+        </footer>
+      </div>
+
+      {openArticle && <Modal article={openArticle} onClose={()=>setOpenArticle(null)} />}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
