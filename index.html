@@ -706,7 +706,11 @@ function Dateline({ article }) {
 }
 
 function getImg(article) {
-  return article.img || null;
+  /* Si l'article a une vraie image, on l'utilise.
+     Sinon on pioche une photo judo dans le pool Unsplash
+     via un hash stable sur le titre — même titre = même photo toujours. */
+  if (article.img && article.img.trim()) return article.img.trim();
+  return hashImg(article.title || article.id || "");
 }
 
 function Spinner() {
