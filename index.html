@@ -582,6 +582,84 @@ async function fetchFromGoogle() {
   return data.articles;
 }
 
+/* ══════════════════════════════════════════
+   TRADUCTION AUTOMATIQUE EN FRANÇAIS
+   via API Claude (Anthropic)
+══════════════════════════════════════════ */
+
+/* Détecte si un texte est déjà en français (heuristique simple) */
+function isFrench(text) {
+  if (!text) return true;
+  const frWords = /\b(le|la|les|un|une|des|du|au|aux|et|en|de|pour|dans|sur|avec|par|que|qui|est|sont|était|avoir|être|plus|très|après|avant|lors|selon|lors|après|tout|tous|mais|donc|car|ni|ou|si|même)\b/i;
+  return frWords.test(text);
+}
+
+/* Cache en mémoire pour éviter de retraduire */
+const translationCache = {};
+
+async function translateArticles(articles) {
+  /* Filtrer uniquement les articles qui ont besoin d'une traduction */
+  const toTranslate = articles.filter(a => {
+    const key = a.id || a.title;
+    if (translationCache[key]) return false;
+    return !isFrench(a.title) || !isFrench(a.body);
+  });
+
+  if (toTranslate.length === 0) {
+    /* Appliquer le cache sur tous */
+    return articles.map(a => {
+      const key = a.id || a.title;
+      return translationCache[key] ? { ...a, ...translationCache[key] } : a;
+    });
+  }
+
+  /* Préparer le payload pour Claude : on envoie titre + body de chaque article */
+  const payload = toTranslate.map((a, i) => ({
+    i,
+    id: a.id || a.title,
+    title: a.title || "",
+    body: (a.body || "").slice(0, 400),
+  }));
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: "Tu es un traducteur spécialisé dans le judo et les sports de combat. Traduis les titres et résumés d'articles en français naturel et fluide. Réponds UNIQUEMENT avec un JSON valide, sans markdown ni balises, au format : [{\"i\":0,\"title\":\"...\",\"body\":\"...\"},...]. Ne traduis pas si le texte est déjà en français.",
+        messages: [{
+          role: "user",
+          content: `Traduis ces articles en français :\n${JSON.stringify(payload)}`
+        }]
+      })
+    });
+
+    if (!response.ok) throw new Error(`Anthropic API ${response.status}`);
+    const data = await response.json();
+    const raw = data.content.map(b => b.text || "").join("");
+    const clean = raw.replace(/```json|```/g, "").trim();
+    const translated = JSON.parse(clean);
+
+    /* Mettre en cache et patcher les articles */
+    translated.forEach(({ i, title, body }) => {
+      const original = toTranslate[i];
+      if (!original) return;
+      const key = original.id || original.title;
+      translationCache[key] = { title, body };
+    });
+  } catch (e) {
+    console.warn("Traduction indisponible :", e.message);
+  }
+
+  /* Retourner tous les articles avec traductions appliquées */
+  return articles.map(a => {
+    const key = a.id || a.title;
+    return translationCache[key] ? { ...a, ...translationCache[key] } : a;
+  });
+}
+
 /* ── Micro composants ── */
 function Badge({ sourceId, color, short }) {
   const c = color || "#888";
@@ -1046,12 +1124,19 @@ function App() {
     else setRefreshing(true);
     try {
       const raw = await fetchFromGoogle();
+      /* Afficher d'abord les articles bruts, puis traduire en arrière-plan */
       setArticles(raw);
       setIsFallback(false);
       setLastUpdated(new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}));
+      /* Traduction asynchrone : met à jour les articles une fois traduits */
+      translateArticles(raw).then(translated => setArticles(translated));
     } catch(e) {
       console.warn("API indisponible, fallback :", e.message);
-      if (!silent) { setArticles(FALLBACK_ARTICLES); setIsFallback(true); }
+      if (!silent) {
+        setArticles(FALLBACK_ARTICLES);
+        setIsFallback(true);
+        translateArticles(FALLBACK_ARTICLES).then(translated => setArticles(translated));
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
